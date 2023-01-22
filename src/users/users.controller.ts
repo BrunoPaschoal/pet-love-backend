@@ -11,6 +11,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UserEntity } from './database/user.entitiy';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { Validate } from 'class-validator';
 
 @Controller('users')
 export class UsersController {
@@ -22,6 +23,7 @@ export class UsersController {
   }
 
   @Post()
+  @Validate(CreateUserDto)
   async create(@Body() user: CreateUserDto): Promise<UserEntity> {
     return await this.usersService.createUser(user);
   }

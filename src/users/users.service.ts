@@ -25,7 +25,9 @@ export class UsersService {
   }
 
   async findAllUsers(): Promise<UserEntity[]> {
-    return await this.userRepository.find({ select: ['id', 'name', 'email'] });
+    return await this.userRepository.find({
+      select: ['id', 'name', 'email', 'phone'],
+    });
   }
 
   async findUserOrFail(id: string): Promise<UserEntity> {
