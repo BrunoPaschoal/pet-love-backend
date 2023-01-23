@@ -13,7 +13,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     ConfigModule.forRoot(),
     PassportModule,
     UsersModule,
-    JwtModule.register({ privateKey: 'a05fc9e86b11ad3fd371c8bd813e5a6b' }),
+    JwtModule.register({ privateKey: process.env.JWT_SECRET_KEY }),
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
