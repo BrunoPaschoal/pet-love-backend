@@ -30,7 +30,7 @@ export class UsersController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return await this.usersService.findUserOrFail(id);
+    return await this.usersService.findUserByIdOrFail(id);
   }
 
   @Put(':id')

@@ -30,10 +30,21 @@ export class UsersService {
     });
   }
 
-  async findUserOrFail(id: string): Promise<UserEntity> {
+  async findUserByIdOrFail(id: string): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
       where: { id },
       select: ['id', 'name', 'email', 'phone', 'createdAt'],
+    });
+
+    if (!user) {
+      throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
+    }
+    return user;
+  }
+
+  async findUserByEmailOrFail(email: string): Promise<UserEntity> {
+    const user = await this.userRepository.findOne({
+      where: { email },
     });
 
     if (!user) {
