@@ -14,6 +14,15 @@ export class UsersService {
   ) {}
 
   async createUser(user: CreateUserDto): Promise<UserEntity> {
+    const isUserAlreadExist = await this.userRepository.findOne({
+      where: { email: user.email },
+      select: ['id', 'name', 'email', 'phone', 'createdAt'],
+    });
+
+    if (isUserAlreadExist) {
+      throw new HttpException('User Already exists', HttpStatus.BAD_REQUEST);
+    }
+
     const passwordEncrypted = await hash(user.password, 10);
     user.password = passwordEncrypted;
 
