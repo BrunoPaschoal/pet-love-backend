@@ -12,7 +12,7 @@ import {
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dtos/create-role.dto';
 import { Validate } from 'class-validator';
-import { RoleEntity } from './database/role.entity';
+import { RoleEntity } from './entities/role.entity';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('role')

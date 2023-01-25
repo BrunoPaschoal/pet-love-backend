@@ -1,4 +1,4 @@
-import { RoleEntity } from 'src/role/database/role.entity';
+import { RoleEntity } from 'src/modules/role/entities/role.entity';
 import {
   Column,
   CreateDateColumn,

@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common/decorators';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { UserEntity } from './database/user.entitiy';
+import { UserEntity } from './entities/user.entitiy';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { Validate } from 'class-validator';
 import { AuthGuard } from '@nestjs/passport';
