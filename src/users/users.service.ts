@@ -5,12 +5,15 @@ import { Repository } from 'typeorm';
 import { hash } from 'bcrypt';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { RoleEntity } from 'src/role/database/role.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+    @InjectRepository(RoleEntity)
+    private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 
   async createUser(user: CreateUserDto): Promise<UserEntity> {
@@ -26,8 +29,15 @@ export class UsersService {
     const passwordEncrypted = await hash(user.password, 10);
     user.password = passwordEncrypted;
 
-    const userSaved = await this.userRepository.save(user);
+    const newRole = await this.roleRepository.findOne({
+      where: { name: 'USER' },
+    });
+    const userSaved = this.userRepository.create(user);
 
+    console.log('ROLE', newRole);
+
+    userSaved.role = newRole;
+    await this.userRepository.save(userSaved);
     delete userSaved.password;
 
     return userSaved;
@@ -35,15 +45,25 @@ export class UsersService {
 
   async findAllUsers(): Promise<UserEntity[]> {
     return await this.userRepository.find({
-      select: ['id', 'name', 'email', 'phone'],
+      select: ['id', 'name', 'email', 'phone', 'role'],
     });
   }
 
   async findUserByIdOrFail(id: string): Promise<UserEntity> {
-    const user = await this.userRepository.findOne({
-      where: { id },
-      select: ['id', 'name', 'email', 'phone', 'createdAt'],
-    });
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.role', 'role')
+      .where('user.id = :id', { id })
+      .select([
+        'user.id',
+        'user.name',
+        'user.email',
+        'user.phone',
+        'role.id',
+        'role.name',
+        'user.createdAt',
+      ])
+      .getOne();
 
     if (!user) {
       throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);

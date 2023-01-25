@@ -1,7 +1,9 @@
+import { UserEntity } from 'src/users/database/user.entitiy';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -13,6 +15,9 @@ export class RoleEntity {
 
   @Column({ unique: true })
   name: string;
+
+  @OneToMany(() => UserEntity, (user) => user.role)
+  users: UserEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: string;

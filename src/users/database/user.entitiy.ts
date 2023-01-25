@@ -1,7 +1,9 @@
+import { RoleEntity } from 'src/role/database/role.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -22,6 +24,9 @@ export class UserEntity {
 
   @Column()
   phone: string;
+
+  @ManyToOne(() => RoleEntity, (role) => role.id)
+  role: RoleEntity;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: string;
