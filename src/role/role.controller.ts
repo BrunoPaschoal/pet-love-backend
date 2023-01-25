@@ -7,13 +7,16 @@ import {
   HttpStatus,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dtos/create-role.dto';
 import { Validate } from 'class-validator';
 import { RoleEntity } from './database/role.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('role')
+@UseGuards(AuthGuard('jwt'))
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 

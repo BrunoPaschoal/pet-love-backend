@@ -34,8 +34,6 @@ export class UsersService {
     });
     const userSaved = this.userRepository.create(user);
 
-    console.log('ROLE', newRole);
-
     userSaved.role = newRole;
     await this.userRepository.save(userSaved);
     delete userSaved.password;
