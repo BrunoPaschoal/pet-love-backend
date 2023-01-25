@@ -3,6 +3,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { RoleEntity } from 'src/modules/role/entities/role.entity';
 import { UserEntity } from 'src/modules/users/entities/user.entitiy';
+import { AddressEntity } from 'src/modules/address/entities/address.entity';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { UserEntity } from 'src/modules/users/entities/user.entitiy';
       username: process.env.TYPEORM_USERNAME,
       password: process.env.TYPEORM_PASSWORD,
       database: process.env.TYPEORM_DATABASE,
-      entities: [UserEntity, RoleEntity],
+      entities: [UserEntity, RoleEntity, AddressEntity],
       synchronize: true,
     } as TypeOrmModuleOptions),
   ],

@@ -1,9 +1,11 @@
+import { AddressEntity } from 'src/modules/address/entities/address.entity';
 import { RoleEntity } from 'src/modules/role/entities/role.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -27,6 +29,9 @@ export class UserEntity {
 
   @ManyToOne(() => RoleEntity, (role) => role.id)
   role: RoleEntity;
+
+  @OneToMany(() => AddressEntity, (address) => address.user)
+  address: AddressEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: string;
