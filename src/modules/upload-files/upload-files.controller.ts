@@ -1,5 +1,8 @@
 import {
   Controller,
+  Delete,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   UploadedFile,
@@ -19,5 +22,11 @@ export class UploadFilesController {
     @Param('id') userId: string,
   ) {
     return await this.uploadFileService.uploadAvatarFile(userId, file);
+  }
+
+  @Delete('avatar/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteAvatarFile(@Param('id') id: string) {
+    return await this.uploadFileService.deleteAvatarFile(id);
   }
 }
