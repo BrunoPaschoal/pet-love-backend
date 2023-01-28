@@ -27,6 +27,9 @@ export class UserEntity {
   @Column()
   phone: string;
 
+  @Column({ nullable: true })
+  avatar: string;
+
   @ManyToOne(() => RoleEntity, (role) => role.id)
   role: RoleEntity;
 
