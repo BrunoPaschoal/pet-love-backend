@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreatePetDonationDto } from './dtos/create-pet-donation.dto';
 import { PetsEntity } from 'src/modules/pets/entities/pets.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UsersService } from '../users/users.service';
 import { AddressService } from './../address/address.service';
+import { UpdatePetDonationDto } from './dtos/update-pet-donation.dto';
 
 @Injectable()
 export class PetsService {
@@ -18,20 +19,30 @@ export class PetsService {
     return await this.petsRepository.find();
   }
 
-  async createDonation(payload: CreatePetDonationDto): Promise<PetsEntity> {
-    const user = await this.usersService.findUserByIdOrFail(payload.userId);
+  async findDonationByIdOrFail(donationId: string): Promise<PetsEntity> {
+    const petDonation = await this.petsRepository.findOne({
+      where: { id: donationId },
+    });
 
-    const address = await this.addressService.findAddressByIdOrFail(
-      payload.addressId,
-    );
+    if (!petDonation) {
+      throw new HttpException(
+        'Anúncio de doação não encontrado!',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return petDonation;
+  }
+
+  async createDonation(
+    addressId: string,
+    userId: string,
+    payload: CreatePetDonationDto,
+  ): Promise<PetsEntity> {
+    const user = await this.usersService.findUserByIdOrFail(userId);
+    const address = await this.addressService.findAddressByIdOrFail(addressId);
 
     const newPetDonation = this.petsRepository.create({
-      name: payload.name,
-      age: payload.age,
-      ageType: payload.ageType,
-      sex: payload.sex,
-      size: payload.size,
-      breed: payload.breed,
+      ...payload,
       user: user,
       address: address,
     });
@@ -39,5 +50,19 @@ export class PetsService {
     await this.petsRepository.save(newPetDonation);
 
     return newPetDonation;
+  }
+
+  async updateDonation(
+    donationId: string,
+    updatePayload: UpdatePetDonationDto,
+  ): Promise<PetsEntity> {
+    const petDonation = await this.findDonationByIdOrFail(donationId);
+    this.petsRepository.merge(petDonation, updatePayload);
+    return await this.petsRepository.save(petDonation);
+  }
+
+  async deleteDonation(donationId: string): Promise<void> {
+    const petDonation = await this.findDonationByIdOrFail(donationId);
+    await this.petsRepository.remove(petDonation);
   }
 }
