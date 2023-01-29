@@ -27,6 +27,11 @@ export class AddressController {
     return await this.addressService.findUserAddress(id);
   }
 
+  @Get('single-address/:id')
+  async findAdressById(@Param('id') id: string): Promise<AddressEntity> {
+    return await this.addressService.findAddressByIdOrFail(id);
+  }
+
   @Post(':id')
   @Validate(CreateAddressDto)
   async registerAddress(

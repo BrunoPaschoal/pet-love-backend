@@ -35,6 +35,20 @@ export class AddressService {
     return addressList;
   }
 
+  async findAddressByIdOrFail(adressId: string): Promise<AddressEntity> {
+    const address = await this.addressRepository.findOne({
+      where: { id: adressId },
+    });
+
+    if (!address) {
+      throw new HttpException(
+        'Endereço não encontrado na base de dados!',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return address;
+  }
+
   async updateAdress(
     addreesId: string,
     payload: UpdateAddressDto,

@@ -15,19 +15,19 @@ export class PetsEntity {
   id: string;
 
   @Column()
-  petName: string;
+  name: string;
 
   @Column()
-  petAge: number;
+  age: number;
 
   @Column()
-  ageCategory: string;
+  ageType: string;
 
   @Column()
-  petSizeCategory: string;
+  size: string;
 
   @Column()
-  petSex: string;
+  sex: string;
 
   @Column()
   breed: string;
