@@ -1,4 +1,5 @@
 import { AddressEntity } from 'src/modules/address/entities/address.entity';
+import { PetsEntity } from 'src/modules/pets/entities/pets.entity';
 import { RoleEntity } from 'src/modules/role/entities/role.entity';
 import {
   Column,
@@ -35,6 +36,9 @@ export class UserEntity {
 
   @OneToMany(() => AddressEntity, (address) => address.user)
   address: AddressEntity[];
+
+  @OneToMany(() => PetsEntity, (pet) => pet.user)
+  petDonations: PetsEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: string;

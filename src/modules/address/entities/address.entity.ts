@@ -1,9 +1,11 @@
+import { PetsEntity } from 'src/modules/pets/entities/pets.entity';
 import { UserEntity } from 'src/modules/users/entities/user.entitiy';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -30,6 +32,9 @@ export class AddressEntity {
 
   @ManyToOne(() => UserEntity, (user) => user.address)
   user: UserEntity;
+
+  @OneToMany(() => PetsEntity, (pet) => pet.address)
+  pets: PetsEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: string;
