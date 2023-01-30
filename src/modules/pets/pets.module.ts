@@ -10,5 +10,6 @@ import { AddressModule } from '../address/address.module';
   imports: [TypeOrmModule.forFeature([PetsEntity]), UsersModule, AddressModule],
   controllers: [PetsController],
   providers: [PetsService],
+  exports: [PetsService],
 })
 export class PetsModule {}

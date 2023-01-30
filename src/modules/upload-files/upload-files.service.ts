@@ -4,13 +4,20 @@ import * as AWS from 'aws-sdk';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
+import { UploadMultipleFilesResponse } from './interfaces/UploadMultipleFilesResponse';
+import { v4 as uuidv4 } from 'uuid';
+import { PetDonationImageEntity } from 'src/modules/upload-files/entities/pet-donation-images.entity';
+import { PetsService } from './../pets/pets.service';
 
 @Injectable()
 export class UploadFilesService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+    @InjectRepository(PetDonationImageEntity)
+    private petDonationImageRepository: Repository<PetDonationImageEntity>,
     private readonly usersService: UsersService,
+    private readonly petService: PetsService,
   ) {}
 
   private readonly s3 = new AWS.S3({
@@ -49,9 +56,37 @@ export class UploadFilesService {
     return `${this.awsBaseUrl}${key}`;
   }
 
-  async uploadMultipleFiles(key: string, files: Express.Multer.File[]) {
-    console.log(files);
-    return key;
+  async uploadMultipleFiles(
+    petDonationId: string,
+    files: Express.Multer.File[],
+  ): Promise<UploadMultipleFilesResponse[]> {
+    const UploadedFilesData: UploadMultipleFilesResponse[] = [];
+
+    const petDonation = await this.petService.findDonationByIdOrFail(
+      petDonationId,
+    );
+
+    for (let i = 0; i < files.length; i++) {
+      const petGaleryKey = `pet-image-${uuidv4()}`;
+
+      await this.uploadFile(petGaleryKey, files[i]);
+
+      const petImages = this.petDonationImageRepository.create({
+        url: `${this.awsBaseUrl}${petGaleryKey}`,
+        imageKey: petGaleryKey,
+        pet: petDonation,
+      });
+
+      await this.petDonationImageRepository.save(petImages);
+
+      UploadedFilesData.push({
+        id: petImages.id,
+        url: petImages.url,
+        imageKey: petImages.imageKey,
+      });
+    }
+
+    return UploadedFilesData;
   }
 
   async deleteFile(key: string): Promise<void> {
