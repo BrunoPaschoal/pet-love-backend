@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as AWS from 'aws-sdk';
 import { Repository } from 'typeorm';
-import { UserEntity } from '../users/entities/user.entitiy';
+import { UserEntity } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
@@ -47,6 +47,11 @@ export class UploadFilesService {
     };
     await this.s3.upload(params).promise();
     return `${this.awsBaseUrl}${key}`;
+  }
+
+  async uploadMultipleFiles(key: string, files: Express.Multer.File[]) {
+    console.log(files);
+    return key;
   }
 
   async deleteFile(key: string): Promise<void> {

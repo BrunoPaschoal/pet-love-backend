@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { RoleEntity } from 'src/modules/role/entities/role.entity';
-import { UserEntity } from 'src/modules/users/entities/user.entitiy';
+import { UserEntity } from 'src/modules/users/entities/user.entity';
 import { AddressEntity } from 'src/modules/address/entities/address.entity';
 import { PetsEntity } from './../modules/pets/entities/pets.entity';
+import { PetDonationImageEntity } from 'src/modules/upload-files/entities/pet-donation-images.entity';
 
 @Module({
   imports: [
@@ -16,7 +17,13 @@ import { PetsEntity } from './../modules/pets/entities/pets.entity';
       username: process.env.TYPEORM_USERNAME,
       password: process.env.TYPEORM_PASSWORD,
       database: process.env.TYPEORM_DATABASE,
-      entities: [UserEntity, RoleEntity, AddressEntity, PetsEntity],
+      entities: [
+        UserEntity,
+        RoleEntity,
+        AddressEntity,
+        PetsEntity,
+        PetDonationImageEntity,
+      ],
       synchronize: true,
     } as TypeOrmModuleOptions),
   ],

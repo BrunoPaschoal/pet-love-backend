@@ -1,10 +1,12 @@
 import { AddressEntity } from 'src/modules/address/entities/address.entity';
-import { UserEntity } from 'src/modules/users/entities/user.entitiy';
+import { PetDonationImageEntity } from 'src/modules/upload-files/entities/pet-donation-images.entity';
+import { UserEntity } from 'src/modules/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -31,6 +33,12 @@ export class PetsEntity {
 
   @Column()
   breed: string;
+
+  @OneToMany(
+    () => PetDonationImageEntity,
+    (petDonationImage) => petDonationImage.pet,
+  )
+  images: PetDonationImageEntity[];
 
   @ManyToOne(() => AddressEntity, (address) => address.pets)
   address: AddressEntity;

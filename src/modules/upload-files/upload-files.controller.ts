@@ -6,11 +6,16 @@ import {
   Param,
   Post,
   UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import {
+  AnyFilesInterceptor,
+  FileInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadFilesService } from './upload-files.service';
 
 @Controller('upload-files')
@@ -18,6 +23,8 @@ import { UploadFilesService } from './upload-files.service';
 export class UploadFilesController {
   constructor(private readonly uploadFileService: UploadFilesService) {}
 
+  //AVATAR FILE
+  //===================================
   @Post('avatar/:id')
   @UseInterceptors(FileInterceptor('file'))
   async uploadAvatarFile(
@@ -31,5 +38,19 @@ export class UploadFilesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAvatarFile(@Param('id') id: string) {
     return await this.uploadFileService.deleteAvatarFile(id);
+  }
+
+  //PET DONATION IMAGES FILES
+  //===================================
+  @Post('pet-images/:id')
+  @UseInterceptors(FilesInterceptor('files'))
+  async uploadPetDonationFiles(
+    @UploadedFiles() files: Express.Multer.File[],
+    @Param('id') petDonationId: string,
+  ) {
+    return await this.uploadFileService.uploadMultipleFiles(
+      petDonationId,
+      files,
+    );
   }
 }

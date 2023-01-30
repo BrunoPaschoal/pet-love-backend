@@ -1,5 +1,5 @@
 import { PetsEntity } from 'src/modules/pets/entities/pets.entity';
-import { UserEntity } from 'src/modules/users/entities/user.entitiy';
+import { UserEntity } from 'src/modules/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
