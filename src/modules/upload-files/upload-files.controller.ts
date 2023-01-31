@@ -38,6 +38,12 @@ export class UploadFilesController {
 
   //PET DONATION IMAGES FILES
   //===================================
+  @Delete('pet-images/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async findPetDonationImages(@Param('id') petDonationId: string) {
+    return await this.uploadFileService.findPetDonationImages(petDonationId);
+  }
+
   @Post('pet-images/:id')
   @UseInterceptors(FilesInterceptor('files'))
   async uploadPetDonationFiles(
@@ -48,5 +54,11 @@ export class UploadFilesController {
       petDonationId,
       files,
     );
+  }
+
+  @Delete('pet-images/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteImageByKey(@Param('id') id: string) {
+    return await this.uploadFileService.deletePetImageByKey(id);
   }
 }

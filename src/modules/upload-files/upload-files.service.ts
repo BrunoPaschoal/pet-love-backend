@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as AWS from 'aws-sdk';
 import { Repository } from 'typeorm';
@@ -42,6 +42,30 @@ export class UploadFilesService {
     await this.deleteFile(userIdAsAKey);
     user.avatar = null;
     await this.userRepository.save(user);
+  }
+
+  async deletePetImageByKey(key: string): Promise<void> {
+    const imageRegister = await this.petDonationImageRepository.findOne({
+      where: { imageKey: key },
+    });
+
+    if (!imageRegister) {
+      throw new HttpException('Imagem não encontrada!', HttpStatus.NOT_FOUND);
+    }
+
+    try {
+      await this.petDonationImageRepository.remove(imageRegister);
+      await this.deleteFile(key);
+    } catch (error) {
+      throw new HttpException(
+        'Ocorreu um erro inesperado',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async findPetDonationImages(petDonationId: string) {
+    //Implementar
   }
 
   async uploadFile(key: string, file: Express.Multer.File) {
