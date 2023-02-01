@@ -64,8 +64,16 @@ export class UploadFilesService {
     }
   }
 
-  async findPetDonationImages(petDonationId: string) {
-    //Implementar
+  async findPetDonationImages(
+    petDonationId: string,
+  ): Promise<PetDonationImageEntity[]> {
+    const petDonationImages = await this.petDonationImageRepository.find({
+      where: { pet: { id: petDonationId } },
+    });
+
+    console.log(petDonationImages);
+
+    return petDonationImages;
   }
 
   async uploadFile(key: string, file: Express.Multer.File) {

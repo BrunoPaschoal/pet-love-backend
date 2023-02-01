@@ -1,6 +1,7 @@
 import {
   Controller,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
@@ -13,6 +14,7 @@ import {
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { UploadFilesService } from './upload-files.service';
+import { PetDonationImageEntity } from './entities/pet-donation-images.entity';
 
 @Controller('upload-files')
 @UseGuards(AuthGuard('jwt'))
@@ -38,9 +40,11 @@ export class UploadFilesController {
 
   //PET DONATION IMAGES FILES
   //===================================
-  @Delete('pet-images/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async findPetDonationImages(@Param('id') petDonationId: string) {
+
+  @Get('pet-images/:id')
+  async findPetDonationImages(
+    @Param('id') petDonationId: string,
+  ): Promise<PetDonationImageEntity[]> {
     return await this.uploadFileService.findPetDonationImages(petDonationId);
   }
 
