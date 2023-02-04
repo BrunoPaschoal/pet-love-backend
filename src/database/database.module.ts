@@ -6,6 +6,7 @@ import { UserEntity } from 'src/modules/users/entities/user.entity';
 import { AddressEntity } from 'src/modules/address/entities/address.entity';
 import { PetsEntity } from './../modules/pets/entities/pets.entity';
 import { PetDonationImageEntity } from 'src/modules/upload-files/entities/pet-donation-images.entity';
+import { FavoritePetEntity } from 'src/modules/favorite-pets/entities/favorite-pet.entity';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PetDonationImageEntity } from 'src/modules/upload-files/entities/pet-do
         AddressEntity,
         PetsEntity,
         PetDonationImageEntity,
+        FavoritePetEntity,
       ],
       synchronize: true,
     } as TypeOrmModuleOptions),

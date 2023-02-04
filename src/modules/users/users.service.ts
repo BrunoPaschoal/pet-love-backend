@@ -48,6 +48,7 @@ export class UsersService {
   }
 
   async findUserByIdOrFail(id: string): Promise<UserEntity> {
+    //Adicionar avatar no retorno
     const user = await this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.role', 'role')

@@ -33,6 +33,13 @@ export class PetsService {
     return petDonation;
   }
 
+  async doesPetBelongToUser(userId: string, donationId: string) {
+    const pet = await this.petsRepository.findOne({
+      where: { id: donationId, user: { id: userId } },
+    });
+    return !!pet;
+  }
+
   async createDonation(
     addressId: string,
     userId: string,
@@ -40,6 +47,8 @@ export class PetsService {
   ): Promise<PetsEntity> {
     const user = await this.usersService.findUserByIdOrFail(userId);
     const address = await this.addressService.findAddressByIdOrFail(addressId);
+
+    //CRIAR VALIDAÇÃO QUE VERIFICA SE O ENDEREÇO ENVIADO PERTENCE AO USUÁRIO ENVIADO
 
     const newPetDonation = this.petsRepository.create({
       ...payload,

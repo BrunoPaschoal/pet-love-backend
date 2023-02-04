@@ -8,6 +8,7 @@ import { UsersModule } from './modules/users/users.module';
 import { AddressModule } from './modules/address/address.module';
 import { UploadFilesModule } from './modules/upload-files/upload-files.module';
 import { PetsModule } from './modules/pets/pets.module';
+import { FavoritePetsModule } from './modules/favorite-pets/favorite-pets.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PetsModule } from './modules/pets/pets.module';
     AddressModule,
     UploadFilesModule,
     PetsModule,
+    FavoritePetsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

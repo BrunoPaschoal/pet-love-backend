@@ -71,8 +71,6 @@ export class UploadFilesService {
       where: { pet: { id: petDonationId } },
     });
 
-    console.log(petDonationImages);
-
     return petDonationImages;
   }
 

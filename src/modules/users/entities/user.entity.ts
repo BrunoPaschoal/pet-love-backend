@@ -1,4 +1,5 @@
 import { AddressEntity } from 'src/modules/address/entities/address.entity';
+import { FavoritePetEntity } from 'src/modules/favorite-pets/entities/favorite-pet.entity';
 import { PetsEntity } from 'src/modules/pets/entities/pets.entity';
 import { RoleEntity } from 'src/modules/role/entities/role.entity';
 import {
@@ -36,6 +37,9 @@ export class UserEntity {
 
   @OneToMany(() => AddressEntity, (address) => address.user)
   address: AddressEntity[];
+
+  @OneToMany(() => FavoritePetEntity, (favorite) => favorite.user)
+  favoritePets: FavoritePetEntity[];
 
   @OneToMany(() => PetsEntity, (pet) => pet.user)
   petDonations: PetsEntity[];

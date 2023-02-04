@@ -1,4 +1,5 @@
 import { AddressEntity } from 'src/modules/address/entities/address.entity';
+import { FavoritePetEntity } from 'src/modules/favorite-pets/entities/favorite-pet.entity';
 import { PetDonationImageEntity } from 'src/modules/upload-files/entities/pet-donation-images.entity';
 import { UserEntity } from 'src/modules/users/entities/user.entity';
 import {
@@ -42,6 +43,9 @@ export class PetsEntity {
 
   @ManyToOne(() => AddressEntity, (address) => address.pets)
   address: AddressEntity;
+
+  @OneToMany(() => FavoritePetEntity, (favorite) => favorite.pet)
+  favoritePets: FavoritePetEntity[];
 
   @ManyToOne(() => UserEntity, (user) => user.petDonations)
   user: UserEntity;
