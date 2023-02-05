@@ -5,7 +5,7 @@ import { PetsEntity } from './../../pets/entities/pets.entity';
 @Entity({ name: 'favorite-pets' })
 export class FavoritePetEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @ManyToOne(() => UserEntity, (user) => user.favoritePets)
   user: UserEntity;

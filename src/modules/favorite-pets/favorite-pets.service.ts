@@ -13,6 +13,7 @@ export class FavoritePetsService {
     private readonly usersService: UsersService,
     private readonly petService: PetsService,
   ) {}
+
   async favoritePet(
     userId: string,
     petDonationId: string,
@@ -56,6 +57,33 @@ export class FavoritePetsService {
     await this.favoritePetsRepository.save(newFavorite);
 
     return newFavorite;
+  }
+
+  async findUserFavorites(userId: string): Promise<FavoritePetEntity[]> {
+    await this.usersService.findUserByIdOrFail(userId);
+
+    const userFavoritePets = await this.favoritePetsRepository
+      .createQueryBuilder('favoritePet')
+      .leftJoinAndSelect('favoritePet.pet', 'pet')
+      .where('favoritePet.userId = :userId', { userId })
+      .getMany();
+
+    return userFavoritePets;
+  }
+
+  async unfavoritePet(favoriteId: string) {
+    const favoritePet = await this.favoritePetsRepository.findOne({
+      where: { id: favoriteId },
+    });
+
+    if (!favoritePet) {
+      throw new HttpException(
+        'O anúncio de doação não está em seus favoritos!',
+        HttpStatus.OK,
+      );
+    }
+
+    await this.favoritePetsRepository.remove(favoritePet);
   }
 
   async alreadyInTheTavorites(userId: string, donationId: string) {
