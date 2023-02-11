@@ -8,6 +8,7 @@ import { PetsEntity } from './../modules/pets/entities/pets.entity';
 import { PetDonationImageEntity } from 'src/modules/upload-files/entities/pet-donation-images.entity';
 import { FavoritePetEntity } from 'src/modules/favorite-pets/entities/favorite-pet.entity';
 import { DogBreedsEntity } from 'src/modules/animal-breeds/entities/dog-breeds.entity';
+import { CatBreedsEntity } from 'src/modules/animal-breeds/entities/cat-breeds.entity';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { DogBreedsEntity } from 'src/modules/animal-breeds/entities/dog-breeds.e
         PetDonationImageEntity,
         FavoritePetEntity,
         DogBreedsEntity,
+        CatBreedsEntity,
       ],
       synchronize: true,
     } as TypeOrmModuleOptions),
