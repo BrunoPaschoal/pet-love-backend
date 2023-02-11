@@ -40,7 +40,7 @@ export class AnimalBreedsController {
   async findCatBreedsWithSilimarNames(
     @Param('breed') similarCatBreedName: string,
   ) {
-    return this.animalBreedsService.findDogBreedsWithSilimarNames(
+    return this.animalBreedsService.findCatBreedsWithSilimarNames(
       similarCatBreedName,
     );
   }

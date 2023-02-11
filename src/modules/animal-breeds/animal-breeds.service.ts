@@ -17,7 +17,10 @@ export class AnimalBreedsService {
 
   //DOGS RESOURCES
   async findDogBreeds(): Promise<DogBreedsEntity[]> {
-    return await this.dogBreedsEntityRepository.find();
+    return await this.dogBreedsEntityRepository
+      .createQueryBuilder('dogBreeds')
+      .orderBy('dogBreeds.breedName', 'ASC')
+      .getMany();
   }
 
   async findDogBreedsWithSilimarNames(
@@ -56,7 +59,10 @@ export class AnimalBreedsService {
 
   //CATS RESOURCES
   async findCatBreeds(): Promise<CatBreedsEntity[]> {
-    return await this.catBreedsEntityRepository.find();
+    return await this.catBreedsEntityRepository
+      .createQueryBuilder('catBreeds')
+      .orderBy('catBreeds.breedName', 'ASC')
+      .getMany();
   }
 
   async findCatBreedsWithSilimarNames(
