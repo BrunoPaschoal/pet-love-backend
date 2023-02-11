@@ -27,7 +27,9 @@ export class FavoritePetsController {
   }
 
   @Get(':id')
-  async(@Param('id') userId: string): Promise<FavoritePetEntity[]> {
+  async findUserFavorites(
+    @Param('id') userId: string,
+  ): Promise<FavoritePetEntity[]> {
     return this.favoritePetsService.findUserFavorites(userId);
   }
 

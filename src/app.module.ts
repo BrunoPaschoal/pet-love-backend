@@ -9,6 +9,7 @@ import { AddressModule } from './modules/address/address.module';
 import { UploadFilesModule } from './modules/upload-files/upload-files.module';
 import { PetsModule } from './modules/pets/pets.module';
 import { FavoritePetsModule } from './modules/favorite-pets/favorite-pets.module';
+import { AnimalBreedsModule } from './modules/animal-breeds/animal-breeds.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { FavoritePetsModule } from './modules/favorite-pets/favorite-pets.module
     UploadFilesModule,
     PetsModule,
     FavoritePetsModule,
+    AnimalBreedsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
