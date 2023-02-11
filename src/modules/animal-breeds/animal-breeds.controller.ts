@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Post, Body } from '@nestjs/common';
+import { Controller, Get, UseGuards, Post, Body, Param } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AnimalBreedsService } from './animal-breeds.service';
 import { PopulateCatBreedsBaseDto } from './dto/populate-cat-breeds-base.dto';
@@ -11,9 +11,18 @@ export class AnimalBreedsController {
   constructor(private readonly animalBreedsService: AnimalBreedsService) {}
 
   //DOGS RESOURCES
-  @Get('dog-breeds')
+  @Get('dog-breeds/all')
   async findDogBreeds(): Promise<DogBreedsEntity[]> {
     return this.animalBreedsService.findDogBreeds();
+  }
+
+  @Get('dog-breeds/by-similar-name/:breed')
+  async findDogBreedsWithSilimarNames(
+    @Param('breed') similarDogBreedName: string,
+  ) {
+    return this.animalBreedsService.findDogBreedsWithSilimarNames(
+      similarDogBreedName,
+    );
   }
 
   @Post('dog-breeds')
@@ -22,9 +31,18 @@ export class AnimalBreedsController {
   }
 
   //CATS RESOURCES
-  @Get('cat-breeds')
+  @Get('cat-breeds/all')
   async findCatBreeds(): Promise<DogBreedsEntity[]> {
     return this.animalBreedsService.findCatBreeds();
+  }
+
+  @Get('cat-breeds/by-similar-name/:breed')
+  async findCatBreedsWithSilimarNames(
+    @Param('breed') similarCatBreedName: string,
+  ) {
+    return this.animalBreedsService.findDogBreedsWithSilimarNames(
+      similarCatBreedName,
+    );
   }
 
   @Post('cat-breeds')

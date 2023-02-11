@@ -20,6 +20,17 @@ export class AnimalBreedsService {
     return await this.dogBreedsEntityRepository.find();
   }
 
+  async findDogBreedsWithSilimarNames(
+    breedName: string,
+  ): Promise<DogBreedsEntity[]> {
+    const dogBreeds = await this.dogBreedsEntityRepository
+      .createQueryBuilder('dogBreeds')
+      .where('dogBreeds.breedName LIKE :name', { name: `%${breedName}%` })
+      .getMany();
+
+    return dogBreeds;
+  }
+
   async populateDogBreedsBase({ dogBreeds }: PopulateDogBreedsBaseDto) {
     const rejectedBreeds: string[] = [];
     const insertedSuccessfully: string[] = [];
@@ -46,6 +57,17 @@ export class AnimalBreedsService {
   //CATS RESOURCES
   async findCatBreeds(): Promise<CatBreedsEntity[]> {
     return await this.catBreedsEntityRepository.find();
+  }
+
+  async findCatBreedsWithSilimarNames(
+    breedName: string,
+  ): Promise<CatBreedsEntity[]> {
+    const catBreeds = await this.catBreedsEntityRepository
+      .createQueryBuilder('catBreeds')
+      .where('catBreeds.breedName LIKE :name', { name: `%${breedName}%` })
+      .getMany();
+
+    return catBreeds;
   }
 
   async populateCatBreedsBase({ catBreeds }: PopulateCatBreedsBaseDto) {
