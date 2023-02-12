@@ -9,6 +9,7 @@ import { PetDonationImageEntity } from 'src/modules/upload-files/entities/pet-do
 import { FavoritePetEntity } from 'src/modules/favorite-pets/entities/favorite-pet.entity';
 import { DogBreedsEntity } from 'src/modules/animal-breeds/entities/dog-breeds.entity';
 import { CatBreedsEntity } from 'src/modules/animal-breeds/entities/cat-breeds.entity';
+import { PersonalityEntity } from 'src/modules/personality/entities/personality.entity';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { CatBreedsEntity } from 'src/modules/animal-breeds/entities/cat-breeds.e
         FavoritePetEntity,
         DogBreedsEntity,
         CatBreedsEntity,
+        PersonalityEntity,
       ],
       synchronize: true,
     } as TypeOrmModuleOptions),
