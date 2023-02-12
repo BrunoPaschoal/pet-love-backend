@@ -72,6 +72,7 @@ export class PetsService {
 
   async deleteDonation(donationId: string): Promise<void> {
     const petDonation = await this.findDonationByIdOrFail(donationId);
+    // Deve haver uma lógica para deletar as imagens de doação desse PET
     await this.petsRepository.remove(petDonation);
   }
 }

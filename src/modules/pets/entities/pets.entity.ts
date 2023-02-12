@@ -17,6 +17,9 @@ export class PetsEntity {
   @PrimaryGeneratedColumn()
   id: string;
 
+  @Column({ name: 'pet-type' })
+  petType: string;
+
   @Column()
   name: string;
 
@@ -34,6 +37,9 @@ export class PetsEntity {
 
   @Column()
   breed: string;
+
+  @Column({ name: 'pet-story' })
+  petStory: string;
 
   @OneToMany(
     () => PetDonationImageEntity,
