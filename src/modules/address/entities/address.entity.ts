@@ -19,6 +19,9 @@ export class AddressEntity {
   city: string;
 
   @Column()
+  state: string;
+
+  @Column()
   district: string;
 
   @Column()
@@ -27,8 +30,17 @@ export class AddressEntity {
   @Column()
   number: number;
 
-  @Column({ name: 'zip_code' })
-  zipCode: string;
+  @Column({ name: 'cep' })
+  cep: string;
+
+  @Column({ name: 'city_ibge_code' })
+  cityIbgeCode: string;
+
+  @Column()
+  latitude: number;
+
+  @Column()
+  longitude: number;
 
   @ManyToOne(() => UserEntity, (user) => user.address)
   user: UserEntity;

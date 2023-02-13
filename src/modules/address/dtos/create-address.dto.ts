@@ -7,6 +7,10 @@ export class CreateAddressDto {
 
   @IsNotEmpty()
   @IsString()
+  state: string;
+
+  @IsNotEmpty()
+  @IsString()
   district: string;
 
   @IsNotEmpty()
@@ -19,5 +23,17 @@ export class CreateAddressDto {
 
   @IsNotEmpty()
   @IsString()
-  zipCode: string;
+  cep: string;
+
+  @IsNotEmpty()
+  @IsString()
+  latitude: number;
+
+  @IsNotEmpty()
+  @IsString()
+  longitude: number;
+
+  @IsNotEmpty()
+  @IsString()
+  cityIbgeCode: string;
 }

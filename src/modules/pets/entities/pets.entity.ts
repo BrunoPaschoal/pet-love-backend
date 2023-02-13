@@ -17,7 +17,7 @@ export class PetsEntity {
   @PrimaryGeneratedColumn()
   id: string;
 
-  @Column({ name: 'pet-type' })
+  @Column({ name: 'pet_type' })
   petType: string;
 
   @Column()
@@ -38,7 +38,7 @@ export class PetsEntity {
   @Column()
   breed: string;
 
-  @Column({ name: 'pet-story' })
+  @Column({ name: 'pet_story' })
   petStory: string;
 
   @OneToMany(

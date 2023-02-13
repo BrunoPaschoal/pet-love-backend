@@ -9,6 +9,11 @@ export class UpdateAddressDto {
   @IsString()
   @IsOptional()
   @Allow()
+  state: string;
+
+  @IsString()
+  @IsOptional()
+  @Allow()
   district: string;
 
   @IsString()
@@ -24,5 +29,20 @@ export class UpdateAddressDto {
   @IsString()
   @IsOptional()
   @Allow()
-  zipCode: string;
+  cep: string;
+
+  @IsString()
+  @IsOptional()
+  @IsNumber()
+  latitude: number;
+
+  @IsString()
+  @IsOptional()
+  @IsNumber()
+  longitude: number;
+
+  @IsString()
+  @IsOptional()
+  @Allow()
+  cityIbgeCode: string;
 }
