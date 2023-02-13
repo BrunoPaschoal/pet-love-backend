@@ -16,6 +16,7 @@ import { AddressService } from './address.service';
 import { CreateAddressDto } from './dtos/create-address.dto';
 import { UpdateAddressDto } from './dtos/update-address.dto';
 import { AddressEntity } from './entities/address.entity';
+import { ConsultAddressByCepResponse } from './interfaces/addressInterfaces';
 
 @Controller('address')
 @UseGuards(AuthGuard('jwt'))
@@ -25,6 +26,13 @@ export class AddressController {
   @Get(':id')
   async findUserAdress(@Param('id') id: string): Promise<AddressEntity[]> {
     return await this.addressService.findUserAddress(id);
+  }
+
+  @Get('consult-address/:cep')
+  async consultAddress(
+    @Param('cep') cep: string,
+  ): Promise<ConsultAddressByCepResponse> {
+    return await this.addressService.consultAddressByCep(cep);
   }
 
   @Get('single-address/:id')

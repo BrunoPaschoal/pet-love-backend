@@ -5,6 +5,11 @@ import { UsersService } from '../users/users.service';
 import { CreateAddressDto } from './dtos/create-address.dto';
 import { UpdateAddressDto } from './dtos/update-address.dto';
 import { AddressEntity } from './entities/address.entity';
+import { axiosInstance } from './../../config/axiosConfig';
+import {
+  CepExternalConsultResponse,
+  ConsultAddressByCepResponse,
+} from './interfaces/addressInterfaces';
 
 @Injectable()
 export class AddressService {
@@ -76,5 +81,27 @@ export class AddressService {
     }
 
     await this.addressRepository.remove(address);
+  }
+
+  async consultAddressByCep(cep: string): Promise<ConsultAddressByCepResponse> {
+    const { data } = await axiosInstance.get<CepExternalConsultResponse>(
+      '/cep',
+      {
+        params: { cep: cep },
+      },
+    );
+
+    const consultResponse: ConsultAddressByCepResponse = {
+      city: data.cidade.nome,
+      state: data.estado.sigla,
+      district: data.bairro,
+      street: data.logradouro,
+      cep: data.cep,
+      cityIbgeCode: data.cidade.ibge,
+      latitude: +data.latitude,
+      longitude: +data.longitude,
+    };
+
+    return consultResponse;
   }
 }
