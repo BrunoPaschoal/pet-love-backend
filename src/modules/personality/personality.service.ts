@@ -12,7 +12,9 @@ export class PersonalityService {
   ) {}
 
   async findPersonalities(): Promise<PersonalityEntity[]> {
-    const personalities = await this.personalityRepository.find();
+    const personalities = await this.personalityRepository.find({
+      select: ['id', 'name'],
+    });
     return personalities;
   }
 

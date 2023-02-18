@@ -36,10 +36,10 @@ export class AddressEntity {
   @Column({ name: 'city_ibge_code' })
   cityIbgeCode: string;
 
-  @Column()
+  @Column({ type: 'float' })
   latitude: number;
 
-  @Column()
+  @Column({ type: 'float' })
   longitude: number;
 
   @ManyToOne(() => UserEntity, (user) => user.address)

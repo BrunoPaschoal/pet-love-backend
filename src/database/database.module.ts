@@ -10,6 +10,7 @@ import { FavoritePetEntity } from 'src/modules/favorite-pets/entities/favorite-p
 import { DogBreedsEntity } from 'src/modules/animal-breeds/entities/dog-breeds.entity';
 import { CatBreedsEntity } from 'src/modules/animal-breeds/entities/cat-breeds.entity';
 import { PersonalityEntity } from 'src/modules/personality/entities/personality.entity';
+import { PetPersonalityEntity } from 'src/modules/pets/entities/pets-personality.entity';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { PersonalityEntity } from 'src/modules/personality/entities/personality.
         DogBreedsEntity,
         CatBreedsEntity,
         PersonalityEntity,
+        PetPersonalityEntity,
       ],
       synchronize: true,
     } as TypeOrmModuleOptions),

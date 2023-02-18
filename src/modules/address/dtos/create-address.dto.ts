@@ -26,11 +26,11 @@ export class CreateAddressDto {
   cep: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsNumber()
   latitude: number;
 
   @IsNotEmpty()
-  @IsString()
+  @IsNumber()
   longitude: number;
 
   @IsNotEmpty()

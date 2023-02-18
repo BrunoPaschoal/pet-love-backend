@@ -1,10 +1,19 @@
-import { IsIn, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsIn,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import {
   AgeType,
   PetSex,
   PetSize,
   PetType,
 } from '../interfaces/petsInterfaces';
+import { PersonalityDto } from './personality.dto';
 
 export class CreatePetDonationDto {
   @IsNotEmpty()
@@ -40,4 +49,9 @@ export class CreatePetDonationDto {
   @IsNotEmpty()
   @IsString()
   petStory: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => PersonalityDto)
+  personality: PersonalityDto[];
 }

@@ -5,9 +5,19 @@ import { PetsService } from './pets.service';
 import { PetsEntity } from 'src/modules/pets/entities/pets.entity';
 import { UsersModule } from '../users/users.module';
 import { AddressModule } from '../address/address.module';
+import { PetPersonalityEntity } from './entities/pets-personality.entity';
+import { PersonalityEntity } from '../personality/entities/personality.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PetsEntity]), UsersModule, AddressModule],
+  imports: [
+    TypeOrmModule.forFeature([
+      PetsEntity,
+      PetPersonalityEntity,
+      PersonalityEntity,
+    ]),
+    UsersModule,
+    AddressModule,
+  ],
   controllers: [PetsController],
   providers: [PetsService],
   exports: [PetsService],

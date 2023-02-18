@@ -11,6 +11,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { PetPersonalityEntity } from './pets-personality.entity';
 
 @Entity({ name: 'pets' })
 export class PetsEntity {
@@ -55,6 +56,9 @@ export class PetsEntity {
 
   @ManyToOne(() => UserEntity, (user) => user.petDonations)
   user: UserEntity;
+
+  @OneToMany(() => PetPersonalityEntity, (petPersonality) => petPersonality.pet)
+  personality: PetPersonalityEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: string;
