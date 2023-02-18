@@ -17,4 +17,5 @@ export enum PetSex {
 export enum PetType {
   DOG = 'DOG',
   CAT = 'CAT',
+  BOTH = 'BOTH',
 }

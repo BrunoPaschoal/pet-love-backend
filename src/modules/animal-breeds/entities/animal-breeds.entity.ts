@@ -6,10 +6,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ name: 'cat-breeds' })
-export class CatBreedsEntity {
+@Entity({ name: 'animal-breeds' })
+export class AnimalBreedsEntity {
   @PrimaryGeneratedColumn()
   id: string;
+
+  @Column({ name: 'pet_type' })
+  petType: string;
 
   @Column({ unique: true, name: 'breed_name' })
   breedName: string;

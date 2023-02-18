@@ -44,7 +44,7 @@ export class CreatePetDonationDto {
 
   @IsNotEmpty()
   @IsString()
-  breed: string;
+  breedId: string;
 
   @IsNotEmpty()
   @IsString()
