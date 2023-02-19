@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PopulateAnimalBreedsBaseDto } from './dto/populate-animal-breeds-base.dto';
@@ -18,6 +18,21 @@ export class AnimalBreedsService {
       .createQueryBuilder('animalBreeds')
       .orderBy('animalBreeds.breedName', 'ASC')
       .getMany();
+  }
+
+  async findAnimalBreedsByIdOrFail(
+    breedId: string,
+    petType: string,
+  ): Promise<AnimalBreedsEntity> {
+    const breed = await this.animalBreedsEntityRepository.findOne({
+      where: { id: breedId, petType: petType },
+    });
+
+    if (!breed) {
+      throw new HttpException('Raça não encontrada!', HttpStatus.NOT_FOUND);
+    }
+
+    return breed;
   }
 
   async findAnimalBreedsWithSilimarNames(

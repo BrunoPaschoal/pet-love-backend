@@ -1,4 +1,5 @@
 import { AddressEntity } from 'src/modules/address/entities/address.entity';
+import { AnimalBreedsEntity } from 'src/modules/animal-breeds/entities/animal-breeds.entity';
 import { FavoritePetEntity } from 'src/modules/favorite-pets/entities/favorite-pet.entity';
 import { PetDonationImageEntity } from 'src/modules/upload-files/entities/pet-donation-images.entity';
 import { UserEntity } from 'src/modules/users/entities/user.entity';
@@ -36,11 +37,11 @@ export class PetsEntity {
   @Column()
   sex: string;
 
-  @Column()
-  breed: string;
-
   @Column({ name: 'pet_story' })
   petStory: string;
+
+  @ManyToOne(() => AnimalBreedsEntity, (animalBreeds) => animalBreeds.pet)
+  breed: AnimalBreedsEntity;
 
   @OneToMany(
     () => PetDonationImageEntity,

@@ -20,8 +20,4 @@ export class UpdatePetDonationDto {
   @IsOptional()
   @IsString()
   sex: string;
-
-  @IsOptional()
-  @IsString()
-  breed: string;
 }

@@ -9,7 +9,7 @@ import { UpdatePetDonationDto } from './dtos/update-pet-donation.dto';
 import { PetPersonalityEntity } from 'src/modules/pets/entities/pets-personality.entity';
 import { PersonalityEntity } from '../personality/entities/personality.entity';
 import { PersonalityDto } from './dtos/personality.dto';
-import { PetType } from './interfaces/petsInterfaces';
+import { AnimalBreedsService } from '../animal-breeds/animal-breeds.service';
 
 @Injectable()
 export class PetsService {
@@ -22,6 +22,7 @@ export class PetsService {
     private personalityRepository: Repository<PersonalityEntity>,
     private readonly usersService: UsersService,
     private readonly addressService: AddressService,
+    private readonly animalBreedService: AnimalBreedsService,
   ) {}
   async findDonations() {
     return await this.petsRepository.find();
@@ -53,10 +54,13 @@ export class PetsService {
     userId: string,
     payload: CreatePetDonationDto,
   ): Promise<PetsEntity> {
+    const personalityList = payload.personality;
     const user = await this.usersService.findUserByIdOrFail(userId);
     const address = await this.addressService.findAddressByIdOrFail(addressId);
-    const personalityList = payload.personality;
-    const breedId = payload.breedId;
+    const breed = await this.animalBreedService.findAnimalBreedsByIdOrFail(
+      payload.breedId,
+      payload.petType,
+    );
 
     delete payload.personality;
     delete payload.breedId;
@@ -64,17 +68,13 @@ export class PetsService {
       ...payload,
       user: user,
       address: address,
+      breed: breed,
     });
 
     await this.petsRepository.save(newPetDonation);
+
     await this.createPetPersonalityRelationship(
       personalityList,
-      newPetDonation,
-    );
-
-    await this.createBreedPetRelationship(
-      breedId,
-      payload.petType,
       newPetDonation,
     );
 
@@ -100,21 +100,6 @@ export class PetsService {
       newPetPersonalityList.push(newPetPersonality);
     }
     await this.petsPersonalityRepository.save(newPetPersonalityList);
-  }
-
-  async createBreedPetRelationship(
-    breedId: string,
-    petType: string,
-    petDonation: PetsEntity,
-  ): Promise<void> {
-    // Implementar
-    if (petType === PetType.CAT) {
-      /* Criar relação com raças de gatos */
-    }
-
-    if (petType === PetType.DOG) {
-      /* Criar relação com raças de cachorro */
-    }
   }
 
   async updateDonation(
