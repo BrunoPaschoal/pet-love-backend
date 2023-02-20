@@ -28,6 +28,15 @@ export class PetsController {
     return this.petsService.findDonations();
   }
 
+  @Get('donations/:id')
+  async getUserDonations(
+    @Param('id') userId: string,
+    @Query('page') page: number,
+    @Query('perPage') perPage: number,
+  ) {
+    return this.petsService.findUserDonations(userId, page, perPage);
+  }
+
   @Post('donations')
   @Validate(CreatePetDonationDto)
   async createDonation(

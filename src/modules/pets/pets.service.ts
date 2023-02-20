@@ -42,6 +42,43 @@ export class PetsService {
     return petDonation;
   }
 
+  async findUserDonations(userId: string, page = 1, perPage = 10) {
+    await this.usersService.findUserByIdOrFail(userId);
+
+    const [results, total] = await this.petsRepository
+      .createQueryBuilder('pets')
+      .leftJoinAndSelect('pets.personality', 'personalities')
+      .leftJoinAndSelect('personalities.personality', 'personality')
+      .leftJoinAndSelect('pets.breed', 'breed')
+      .select([
+        'pets',
+        'personalities',
+        'personality.id',
+        'personality.name',
+        'breed.id',
+        'breed.breedName',
+      ])
+      .where('pets.user = :userId', { userId })
+      .take(perPage)
+      .skip((page - 1) * perPage)
+      .getManyAndCount();
+
+    const totalPages = Math.ceil(total / perPage);
+
+    const pets = results.map((pet) => ({
+      ...pet,
+      personality: pet.personality.map((p) => p.personality),
+    }));
+
+    return {
+      pets,
+      page,
+      perPage,
+      total,
+      totalPages,
+    };
+  }
+
   async doesPetBelongToUser(userId: string, donationId: string) {
     const pet = await this.petsRepository.findOne({
       where: { id: donationId, user: { id: userId } },
