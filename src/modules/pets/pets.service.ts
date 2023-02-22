@@ -10,6 +10,7 @@ import { PetPersonalityEntity } from 'src/modules/pets/entities/pets-personality
 import { PersonalityEntity } from '../personality/entities/personality.entity';
 import { PersonalityDto } from './dtos/personality.dto';
 import { AnimalBreedsService } from '../animal-breeds/animal-breeds.service';
+import { FindPetByDistanceDto } from './dtos/find-pet-by-distance.dto';
 
 @Injectable()
 export class PetsService {
@@ -24,9 +25,6 @@ export class PetsService {
     private readonly addressService: AddressService,
     private readonly animalBreedService: AnimalBreedsService,
   ) {}
-  async findDonations() {
-    return await this.petsRepository.find();
-  }
 
   async findDonationByIdOrFail(donationId: string): Promise<PetsEntity> {
     const petDonation = await this.petsRepository.findOne({
@@ -74,6 +72,61 @@ export class PetsService {
       pets,
       page,
       perPage,
+      total,
+      totalPages,
+    };
+  }
+
+  async findPetsByDistance({ userId, page, perPage, size, cityIbgeCode, sex }) {
+    const currentPage = +page;
+    const perPageAmount = +perPage;
+
+    const latitude = -23.522819996;
+    const longitude = -46.1878036819;
+
+    await this.usersService.findUserByIdOrFail(userId);
+
+    const queryBuilder = this.petsRepository
+      .createQueryBuilder('pets')
+      .leftJoinAndSelect('pets.address', 'address')
+      .leftJoinAndSelect('pets.personality', 'personalities')
+      .leftJoinAndSelect('personalities.personality', 'personality')
+      .leftJoinAndSelect('pets.breed', 'breed')
+      .select([
+        'pets',
+        'personalities',
+        'address.city',
+        'address.state',
+        'personality.id',
+        'personality.name',
+        'breed.id',
+        'breed.breedName',
+        `ST_Distance(address.location, ST_SetSRID(ST_MakePoint(-23.522819996, -46.1878036819), 4326)) as distance`,
+      ])
+      .where('pets.user <> :userId', { userId });
+    if (size) queryBuilder.andWhere('pets.size = :size', { size });
+    if (size) queryBuilder.andWhere('pets.sex = :size', { sex });
+    if (cityIbgeCode)
+      queryBuilder.andWhere('address.cityIbgeCode = :cityIbgeCode', {
+        cityIbgeCode,
+      });
+
+    const [results, total] = await queryBuilder
+      .take(perPageAmount)
+      .skip((currentPage - 1) * perPageAmount)
+      .getManyAndCount();
+
+    const totalPages = Math.ceil(total / perPageAmount);
+
+    const pets = results.map((pet) => ({
+      ...pet,
+      personality: pet.personality.map((p) => p.personality),
+    }));
+
+    return {
+      pets,
+      currentPage,
+      perPageAmount,
       total,
       totalPages,
     };
