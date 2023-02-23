@@ -17,7 +17,7 @@ import { CreatePetDonationDto } from './dtos/create-pet-donation.dto';
 import { PetsEntity } from './entities/pets.entity';
 import { Validate } from 'class-validator';
 import { UpdatePetDonationDto } from './dtos/update-pet-donation.dto';
-import { FindPetByDistanceDto } from './dtos/find-pet-by-distance.dto';
+import { FindPetDonationsDto } from './dtos/find-pet-by-distance.dto';
 
 @Controller('pets')
 @UseGuards(AuthGuard('jwt'))
@@ -25,8 +25,8 @@ export class PetsController {
   constructor(private readonly petsService: PetsService) {}
 
   @Get('donations')
-  async findPetsByDistance(@Query() payload) {
-    return this.petsService.findPetsByDistance(payload);
+  async findPetsByDistance(@Query() payload: FindPetDonationsDto) {
+    return this.petsService.findPetDonations(payload);
   }
 
   @Get('donations/:id')

@@ -10,7 +10,7 @@ import { PetPersonalityEntity } from 'src/modules/pets/entities/pets-personality
 import { PersonalityEntity } from '../personality/entities/personality.entity';
 import { PersonalityDto } from './dtos/personality.dto';
 import { AnimalBreedsService } from '../animal-breeds/animal-breeds.service';
-import { FindPetByDistanceDto } from './dtos/find-pet-by-distance.dto';
+import { FindPetDonationsDto } from './dtos/find-pet-by-distance.dto';
 
 @Injectable()
 export class PetsService {
@@ -77,12 +77,23 @@ export class PetsService {
     };
   }
 
-  async findPetsByDistance({ userId, page, perPage, size, cityIbgeCode, sex }) {
+  async findPetDonations({
+    userId,
+    page,
+    perPage,
+    sizeFilter,
+    stateFilter,
+    cityIbgeCodeFilter,
+    sexFilter,
+    ageFilter,
+    ageTypeFilter,
+  }: FindPetDonationsDto) {
     const currentPage = +page;
     const perPageAmount = +perPage;
+    const ageFilterParam = +ageFilter;
 
-    const latitude = -23.522819996;
-    const longitude = -46.1878036819;
+    // const latitude = -23.522819996;
+    // const longitude = -46.1878036819;
 
     await this.usersService.findUserByIdOrFail(userId);
 
@@ -101,15 +112,22 @@ export class PetsService {
         'personality.name',
         'breed.id',
         'breed.breedName',
-        `ST_Distance(address.location, ST_SetSRID(ST_MakePoint(-23.522819996, -46.1878036819), 4326)) as distance`,
       ])
       .where('pets.user <> :userId', { userId });
-    if (size) queryBuilder.andWhere('pets.size = :size', { size });
-    if (size) queryBuilder.andWhere('pets.sex = :size', { sex });
-    if (cityIbgeCode)
-      queryBuilder.andWhere('address.cityIbgeCode = :cityIbgeCode', {
-        cityIbgeCode,
+    if (sizeFilter)
+      queryBuilder.andWhere('pets.size = :sizeFilter', { sizeFilter });
+    if (sexFilter)
+      queryBuilder.andWhere('pets.sex = :sexFilter', { sexFilter });
+    if (stateFilter)
+      queryBuilder.andWhere('address.state = :stateFilter', { stateFilter });
+    if (cityIbgeCodeFilter)
+      queryBuilder.andWhere('address.cityIbgeCode = :cityIbgeCodeFilter', {
+        cityIbgeCodeFilter,
       });
+    if (ageFilterParam)
+      queryBuilder.andWhere('pets.age= :ageFilterParam', { ageFilterParam });
+    if (ageTypeFilter)
+      queryBuilder.andWhere('pets.ageType = :ageTypeFilter', { ageTypeFilter });
 
     const [results, total] = await queryBuilder
       .take(perPageAmount)

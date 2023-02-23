@@ -42,9 +42,6 @@ export class AddressEntity {
   @Column({ type: 'float' })
   longitude: number;
 
-  // @Column({ type: 'geometry', spatialFeatureType: 'Point', srid: 4326 })
-  // location: string;
-
   @ManyToOne(() => UserEntity, (user) => user.address)
   user: UserEntity;
 
