@@ -42,7 +42,7 @@ export class AddressEntity {
   @Column({ type: 'float' })
   longitude: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.address)
+  @ManyToOne(() => UserEntity, (user) => user.address, { onDelete: 'CASCADE' })
   user: UserEntity;
 
   @OneToMany(() => PetsEntity, (pet) => pet.address)

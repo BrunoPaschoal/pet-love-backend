@@ -80,6 +80,8 @@ export class AddressService {
       throw new HttpException('Endereço não encontrado!', HttpStatus.NOT_FOUND);
     }
 
+    // IMPEDIR DELEÇÃO DO ENDEREÇO CASO ELE ESTEJA ASSOCIADO À ALGUM PET
+
     await this.addressRepository.remove(address);
   }
 

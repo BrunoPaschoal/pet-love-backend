@@ -7,9 +7,13 @@ export class FavoritePetEntity {
   @PrimaryGeneratedColumn()
   id: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.favoritePets)
+  @ManyToOne(() => UserEntity, (user) => user.favoritePets, {
+    onDelete: 'CASCADE',
+  })
   user: UserEntity;
 
-  @ManyToOne(() => PetsEntity, (pet) => pet.favoritePets)
+  @ManyToOne(() => PetsEntity, (pet) => pet.favoritePets, {
+    onDelete: 'CASCADE',
+  })
   pet: PetsEntity;
 }

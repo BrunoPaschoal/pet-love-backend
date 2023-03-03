@@ -7,7 +7,9 @@ export class PetPersonalityEntity {
   @PrimaryGeneratedColumn()
   id: string;
 
-  @ManyToOne(() => PetsEntity, (pet) => pet.personality)
+  @ManyToOne(() => PetsEntity, (pet) => pet.personality, {
+    onDelete: 'CASCADE',
+  })
   pet: PetsEntity;
 
   @ManyToOne(

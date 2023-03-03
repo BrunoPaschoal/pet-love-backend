@@ -49,13 +49,17 @@ export class PetsEntity {
   )
   images: PetDonationImageEntity[];
 
-  @ManyToOne(() => AddressEntity, (address) => address.pets)
+  @ManyToOne(() => AddressEntity, (address) => address.pets, {
+    onDelete: 'CASCADE',
+  })
   address: AddressEntity;
 
   @OneToMany(() => FavoritePetEntity, (favorite) => favorite.pet)
   favoritePets: FavoritePetEntity[];
 
-  @ManyToOne(() => UserEntity, (user) => user.petDonations)
+  @ManyToOne(() => UserEntity, (user) => user.petDonations, {
+    onDelete: 'CASCADE',
+  })
   user: UserEntity;
 
   @OneToMany(() => PetPersonalityEntity, (petPersonality) => petPersonality.pet)
