@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PetsController } from './pets.controller';
 import { PetsService } from './pets.service';
@@ -8,6 +8,7 @@ import { AddressModule } from '../address/address.module';
 import { PetPersonalityEntity } from './entities/pets-personality.entity';
 import { PersonalityEntity } from '../personality/entities/personality.entity';
 import { AnimalBreedsModule } from './../animal-breeds/animal-breeds.module';
+import { UploadFilesModule } from './../upload-files/upload-files.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AnimalBreedsModule } from './../animal-breeds/animal-breeds.module';
     UsersModule,
     AddressModule,
     AnimalBreedsModule,
+    forwardRef(() => UploadFilesModule),
   ],
   controllers: [PetsController],
   providers: [PetsService],

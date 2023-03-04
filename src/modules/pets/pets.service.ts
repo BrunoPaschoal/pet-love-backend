@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { CreatePetDonationDto } from './dtos/create-pet-donation.dto';
 import { PetsEntity } from 'src/modules/pets/entities/pets.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,6 +17,7 @@ import { PersonalityEntity } from '../personality/entities/personality.entity';
 import { PersonalityDto } from './dtos/personality.dto';
 import { AnimalBreedsService } from '../animal-breeds/animal-breeds.service';
 import { FindPetDonationsDto } from './dtos/find-pet-by-distance.dto';
+import { UploadFilesService } from '../upload-files/upload-files.service';
 
 @Injectable()
 export class PetsService {
@@ -21,6 +28,8 @@ export class PetsService {
     private petsPersonalityRepository: Repository<PetPersonalityEntity>,
     @InjectRepository(PersonalityEntity)
     private personalityRepository: Repository<PersonalityEntity>,
+    @Inject(forwardRef(() => UploadFilesService))
+    private uploadFilesService: UploadFilesService,
     private readonly usersService: UsersService,
     private readonly addressService: AddressService,
     private readonly animalBreedService: AnimalBreedsService,
@@ -220,11 +229,9 @@ export class PetsService {
     return await this.petsRepository.save(petDonation);
   }
 
-  async deleteDonation(donationId: string): Promise<void> {
-    const petDonation = await this.findDonationByIdOrFail(donationId);
-
-    // const petPersonalityList =
-
+  async deleteDonation(petId: string): Promise<void> {
+    const petDonation = await this.findDonationByIdOrFail(petId);
+    await this.uploadFilesService.deletePetImagesAndRelationship(petId);
     await this.petsRepository.remove(petDonation);
   }
 }

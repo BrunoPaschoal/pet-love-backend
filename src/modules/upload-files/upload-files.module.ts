@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from '../users/entities/user.entity';
@@ -13,9 +13,10 @@ import { PetDonationImageEntity } from './entities/pet-donation-images.entity';
     TypeOrmModule.forFeature([UserEntity, PetDonationImageEntity]),
     ConfigModule.forRoot(),
     UsersModule,
-    PetsModule,
+    forwardRef(() => PetsModule),
   ],
   controllers: [UploadFilesController],
   providers: [UploadFilesService],
+  exports: [UploadFilesService],
 })
 export class UploadFilesModule {}

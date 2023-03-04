@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  forwardRef,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as AWS from 'aws-sdk';
 import { Repository } from 'typeorm';
@@ -16,8 +22,8 @@ export class UploadFilesService {
     private userRepository: Repository<UserEntity>,
     @InjectRepository(PetDonationImageEntity)
     private petDonationImageRepository: Repository<PetDonationImageEntity>,
+    @Inject(forwardRef(() => PetsService)) private petService: PetsService, //this notation is for handling circular dependencies
     private readonly usersService: UsersService,
-    private readonly petService: PetsService,
   ) {}
 
   private readonly s3 = new AWS.S3({
@@ -117,6 +123,16 @@ export class UploadFilesService {
     }
 
     return UploadedFilesData;
+  }
+
+  async deletePetImagesAndRelationship(petId: string) {
+    const petDonationImages = await this.findPetDonationImages(petId);
+
+    for (let i = 0; i < petDonationImages.length; i++) {
+      const donationImage = petDonationImages[i];
+      await this.deleteFile(donationImage.imageKey);
+      await this.petDonationImageRepository.remove(donationImage);
+    }
   }
 
   async deleteFile(key: string): Promise<void> {

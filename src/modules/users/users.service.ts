@@ -103,6 +103,8 @@ export class UsersService {
       throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
     }
 
+    // DELETAR OS ARQUIVOS DO BUCKET ANTES DE DELETAR O USUÁRIO (AVATAR E PET IMAGES)
+
     await this.userRepository.remove(user);
   }
 }
