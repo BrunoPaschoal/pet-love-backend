@@ -6,6 +6,7 @@ import { CreateAddressDto } from './dtos/create-address.dto';
 import { UpdateAddressDto } from './dtos/update-address.dto';
 import { AddressEntity } from './entities/address.entity';
 import { axiosInstance } from './../../config/axiosConfig';
+import { PetsEntity } from './../pets/entities/pets.entity';
 import {
   CepExternalConsultResponse,
   ConsultAddressByCepResponse,
@@ -16,6 +17,8 @@ export class AddressService {
   constructor(
     @InjectRepository(AddressEntity)
     private addressRepository: Repository<AddressEntity>,
+    @InjectRepository(PetsEntity)
+    private petsRepository: Repository<PetsEntity>,
     private readonly usersService: UsersService,
   ) {}
 
@@ -80,9 +83,22 @@ export class AddressService {
       throw new HttpException('Endereço não encontrado!', HttpStatus.NOT_FOUND);
     }
 
-    // IMPEDIR DELEÇÃO DO ENDEREÇO CASO ELE ESTEJA ASSOCIADO À ALGUM PET
+    const hasPetWhitTheAdress = await this.petsRepository.find({
+      where: { address: { id: addreesId } },
+    });
 
-    await this.addressRepository.remove(address);
+    const allowDelete = hasPetWhitTheAdress.length === 0 ? true : false;
+
+    if (allowDelete) {
+      await this.addressRepository.remove(address);
+    }
+
+    return {
+      allowedToDelete: allowDelete,
+      message: !allowDelete
+        ? 'Vocês tem uma ou mais doações de pets associadas à esse endereço.'
+        : '',
+    };
   }
 
   async consultAddressByCep(cep: string): Promise<ConsultAddressByCepResponse> {

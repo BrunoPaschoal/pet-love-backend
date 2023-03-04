@@ -3,8 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   Post,
   Put,
@@ -59,7 +57,6 @@ export class AddressController {
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAddress(@Param('id') id: string) {
     return await this.addressService.deleteAddress(id);
   }
