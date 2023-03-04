@@ -6,6 +6,8 @@ import { hash } from 'bcrypt';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { RoleEntity } from '../role/entities/role.entity';
+import { PetsEntity } from './../pets/entities/pets.entity';
+import { UploadFilesService } from './../upload-files/upload-files.service';
 
 @Injectable()
 export class UsersService {
@@ -14,6 +16,9 @@ export class UsersService {
     private userRepository: Repository<UserEntity>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
+    @InjectRepository(PetsEntity)
+    private readonly petsRepository: Repository<PetsEntity>,
+    private readonly uploadFileService: UploadFilesService,
   ) {}
 
   async createUser(user: CreateUserDto): Promise<UserEntity> {
@@ -103,7 +108,18 @@ export class UsersService {
       throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
     }
 
-    // DELETAR OS ARQUIVOS DO BUCKET ANTES DE DELETAR O USUÁRIO (AVATAR E PET IMAGES)
+    await this.uploadFileService.deleteAvatarFile(id);
+
+    const userPets = await this.petsRepository.find({
+      where: { user: { id: id } },
+    });
+
+    if (userPets.length > 0) {
+      for (let i = 0; i < userPets.length; i++) {
+        const pet = userPets[i];
+        await this.uploadFileService.deletePetImagesAndRelationship(pet.id);
+      }
+    }
 
     await this.userRepository.remove(user);
   }

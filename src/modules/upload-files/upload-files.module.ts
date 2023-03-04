@@ -1,19 +1,16 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from '../users/entities/user.entity';
-import { UsersModule } from '../users/users.module';
 import { UploadFilesController } from './upload-files.controller';
 import { UploadFilesService } from './upload-files.service';
-import { PetsModule } from './../pets/pets.module';
 import { PetDonationImageEntity } from './entities/pet-donation-images.entity';
+import { PetsEntity } from './../pets/entities/pets.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity, PetDonationImageEntity]),
+    TypeOrmModule.forFeature([UserEntity, PetDonationImageEntity, PetsEntity]),
     ConfigModule.forRoot(),
-    UsersModule,
-    forwardRef(() => PetsModule),
   ],
   controllers: [UploadFilesController],
   providers: [UploadFilesService],

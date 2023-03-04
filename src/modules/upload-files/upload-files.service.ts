@@ -1,29 +1,22 @@
-import {
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-  forwardRef,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as AWS from 'aws-sdk';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../users/entities/user.entity';
-import { UsersService } from '../users/users.service';
 import { UploadMultipleFilesResponse } from './interfaces/UploadMultipleFilesResponse';
 import { v4 as uuidv4 } from 'uuid';
 import { PetDonationImageEntity } from 'src/modules/upload-files/entities/pet-donation-images.entity';
-import { PetsService } from './../pets/pets.service';
+import { PetsEntity } from './../pets/entities/pets.entity';
 
 @Injectable()
 export class UploadFilesService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+    @InjectRepository(PetsEntity)
+    private petsRepository: Repository<PetsEntity>,
     @InjectRepository(PetDonationImageEntity)
     private petDonationImageRepository: Repository<PetDonationImageEntity>,
-    @Inject(forwardRef(() => PetsService)) private petService: PetsService, //this notation is for handling circular dependencies
-    private readonly usersService: UsersService,
   ) {}
 
   private readonly s3 = new AWS.S3({
@@ -35,8 +28,16 @@ export class UploadFilesService {
   private readonly bucketName = process.env.AWS_BUCKET_NAME;
   private readonly awsBaseUrl = process.env.AWS_ACCESS_FILE_URL;
 
+  async findUserByIdOrFail(id: string): Promise<UserEntity> {
+    const user = await this.userRepository.findOne({ where: { id: id } });
+    if (!user) {
+      throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
+    }
+    return user;
+  }
+
   async uploadAvatarFile(userId: string, file: Express.Multer.File) {
-    const user = await this.usersService.findUserByIdOrFail(userId);
+    const user = await this.findUserByIdOrFail(userId);
     const urlImage = await this.uploadFile(userId, file);
     user.avatar = urlImage;
     await this.userRepository.save(user);
@@ -44,7 +45,7 @@ export class UploadFilesService {
   }
 
   async deleteAvatarFile(userIdAsAKey: string): Promise<void> {
-    const user = await this.usersService.findUserByIdOrFail(userIdAsAKey);
+    const user = await this.findUserByIdOrFail(userIdAsAKey);
     await this.deleteFile(userIdAsAKey);
     user.avatar = null;
     await this.userRepository.save(user);
@@ -98,9 +99,18 @@ export class UploadFilesService {
   ): Promise<UploadMultipleFilesResponse[]> {
     const UploadedFilesData: UploadMultipleFilesResponse[] = [];
 
-    const petDonation = await this.petService.findDonationByIdOrFail(
-      petDonationId,
-    );
+    const petDonation = await this.petsRepository.findOne({
+      where: { id: petDonationId },
+    });
+
+    console.log(petDonation);
+
+    if (!petDonation) {
+      throw new HttpException(
+        'Doação de pet não encontrada.',
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     for (let i = 0; i < files.length; i++) {
       const petGaleryKey = `pet-image-${uuidv4()}`;
