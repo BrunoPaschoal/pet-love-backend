@@ -47,6 +47,20 @@ export class AddressController {
     return await this.addressService.registerAddress(id, payload);
   }
 
+  @Post('convert/state')
+  convertData(@Body() data: Record<string, { sigla: string; nome: string }>) {
+    const states = [];
+
+    for (const ibge in data) {
+      if (data.hasOwnProperty(ibge)) {
+        const { nome, sigla } = data[ibge];
+        states.push({ ibge, name: nome, acronym: sigla });
+      }
+    }
+
+    return states;
+  }
+
   @Put(':id')
   @Validate(UpdateAddressDto)
   async updateAdress(

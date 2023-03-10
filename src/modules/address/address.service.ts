@@ -122,4 +122,9 @@ export class AddressService {
 
     return consultResponse;
   }
+
+  async convertCityData(data: Record<string, string>) {
+    const result = Object.entries(data).map(([ibge, city]) => ({ ibge, city }));
+    return result;
+  }
 }
