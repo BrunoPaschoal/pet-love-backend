@@ -176,7 +176,6 @@ export class PetsService {
     const address = await this.addressService.findAddressByIdOrFail(addressId);
     const breed = await this.animalBreedService.findAnimalBreedsByIdOrFail(
       payload.breedId,
-      payload.petType,
     );
 
     delete payload.personality;
@@ -219,12 +218,39 @@ export class PetsService {
     await this.petsPersonalityRepository.save(newPetPersonalityList);
   }
 
+  async updatePetDonationPersonalities(
+    personalityList: PersonalityDto[],
+    petDonation: PetsEntity,
+  ) {
+    const petPersonalities = await this.petsPersonalityRepository.find({
+      where: { pet: { id: petDonation.id } },
+    });
+
+    await this.petsPersonalityRepository.remove(petPersonalities);
+
+    await this.createPetPersonalityRelationship(personalityList, petDonation);
+  }
+
   async updateDonation(
     donationId: string,
     updatePayload: UpdatePetDonationDto,
   ): Promise<PetsEntity> {
-    // Implementar a edição da doação considerando os itens de personalidade e a troca da raça caso o usuário envie alterações
+    const personalityList = updatePayload.personality;
+    const breedId = updatePayload.breedId;
     const petDonation = await this.findDonationByIdOrFail(donationId);
+
+    if (breedId) {
+      const newBreed = await this.animalBreedService.findAnimalBreedsByIdOrFail(
+        breedId,
+      );
+      petDonation.breed = newBreed;
+    }
+
+    if (personalityList && personalityList.length > 0)
+      await this.updatePetDonationPersonalities(personalityList, petDonation);
+
+    delete updatePayload.personality;
+    delete updatePayload.breedId;
     this.petsRepository.merge(petDonation, updatePayload);
     return await this.petsRepository.save(petDonation);
   }

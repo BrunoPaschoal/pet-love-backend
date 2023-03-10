@@ -22,10 +22,9 @@ export class AnimalBreedsService {
 
   async findAnimalBreedsByIdOrFail(
     breedId: string,
-    petType: string,
   ): Promise<AnimalBreedsEntity> {
     const breed = await this.animalBreedsEntityRepository.findOne({
-      where: { id: breedId, petType: petType },
+      where: { id: breedId },
     });
 
     if (!breed) {
