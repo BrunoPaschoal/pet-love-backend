@@ -1,10 +1,4 @@
-import {
-  forwardRef,
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreatePetDonationDto } from './dtos/create-pet-donation.dto';
 import { PetsEntity } from 'src/modules/pets/entities/pets.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,6 +12,7 @@ import { PersonalityDto } from './dtos/personality.dto';
 import { AnimalBreedsService } from '../animal-breeds/animal-breeds.service';
 import { FindPetDonationsDto } from './dtos/find-pet-by-distance.dto';
 import { UploadFilesService } from '../upload-files/upload-files.service';
+import { FavoritePetEntity } from 'src/modules/favorite-pets/entities/favorite-pet.entity';
 
 @Injectable()
 export class PetsService {
@@ -28,8 +23,10 @@ export class PetsService {
     private petsPersonalityRepository: Repository<PetPersonalityEntity>,
     @InjectRepository(PersonalityEntity)
     private personalityRepository: Repository<PersonalityEntity>,
-    @Inject(forwardRef(() => UploadFilesService))
-    private uploadFilesService: UploadFilesService,
+    @InjectRepository(FavoritePetEntity)
+    private favoritePetRepository: Repository<FavoritePetEntity>,
+
+    private readonly uploadFilesService: UploadFilesService,
     private readonly usersService: UsersService,
     private readonly addressService: AddressService,
     private readonly animalBreedService: AnimalBreedsService,
@@ -57,6 +54,7 @@ export class PetsService {
       .leftJoinAndSelect('pets.personality', 'personalities')
       .leftJoinAndSelect('personalities.personality', 'personality')
       .leftJoinAndSelect('pets.breed', 'breed')
+      .leftJoinAndSelect('pets.images', 'images')
       .select([
         'pets',
         'personalities',
@@ -64,6 +62,7 @@ export class PetsService {
         'personality.name',
         'breed.id',
         'breed.breedName',
+        'images',
       ])
       .where('pets.user = :userId', { userId })
       .take(perPage)
@@ -101,10 +100,15 @@ export class PetsService {
     const perPageAmount = +perPage;
     const ageFilterParam = +ageFilter;
 
-    // const latitude = -23.522819996;
-    // const longitude = -46.1878036819;
-
     await this.usersService.findUserByIdOrFail(userId);
+
+    const userFavorites = await this.favoritePetRepository.find({
+      where: { user: { id: userId } },
+      relations: ['pet'],
+      select: {
+        pet: { id: true },
+      },
+    });
 
     const queryBuilder = this.petsRepository
       .createQueryBuilder('pets')
@@ -112,6 +116,7 @@ export class PetsService {
       .leftJoinAndSelect('pets.personality', 'personalities')
       .leftJoinAndSelect('personalities.personality', 'personality')
       .leftJoinAndSelect('pets.breed', 'breed')
+      .leftJoinAndSelect('pets.images', 'images')
       .select([
         'pets',
         'personalities',
@@ -121,6 +126,7 @@ export class PetsService {
         'personality.name',
         'breed.id',
         'breed.breedName',
+        'images',
       ])
       .where('pets.user <> :userId', { userId });
     if (sizeFilter)
@@ -148,6 +154,7 @@ export class PetsService {
     const pets = results.map((pet) => ({
       ...pet,
       personality: pet.personality.map((p) => p.personality),
+      isFavorite: userFavorites.some((fav) => fav.pet.id === pet.id),
     }));
 
     return {
