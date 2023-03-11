@@ -6,8 +6,8 @@ import { PopulateCitiesDatabaseDto } from './dtos/populate-cities.dto';
 export class CitiesController {
   constructor(private readonly citiesService: CitiesService) {}
 
-  @Get('/by-similar-name/:name')
-  async findAnimalBreedsWithSilimarNames(@Param('name') cityName: string) {
+  @Get('/by-similar-name/:name?')
+  async findAnimalBreedsWithSilimarNames(@Param('name') cityName = '') {
     return this.citiesService.findCitiesWithSilimarNames(cityName);
   }
 

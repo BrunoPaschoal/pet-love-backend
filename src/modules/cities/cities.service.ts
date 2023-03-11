@@ -29,7 +29,7 @@ export class CitiesService {
       .where('cities.city ILIKE :name', {
         name: `%${cityName}%`,
       })
-      .take(50)
+      .take(100)
       .getMany();
 
     return cities;

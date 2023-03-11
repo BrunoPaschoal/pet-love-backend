@@ -11,6 +11,19 @@ export class StatesService {
     private statesRepository: Repository<StatesEntity>,
   ) {}
 
+  async findStatesWithSilimarAcronym(
+    stateAcronym: string,
+  ): Promise<StatesEntity[]> {
+    const states = await this.statesRepository
+      .createQueryBuilder('states')
+      .where('states.acronym ILIKE :acronym', {
+        acronym: `%${stateAcronym}%`,
+      })
+      .getMany();
+
+    return states;
+  }
+
   async populateStatesDatabase(states: PopulateStatesDatabaseDto[]) {
     for (let i = 0; i < states.length; i++) {
       const state = states[i];
