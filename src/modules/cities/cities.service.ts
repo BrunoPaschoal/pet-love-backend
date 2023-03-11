@@ -22,4 +22,16 @@ export class CitiesService {
       await this.citiesRepository.save(newCity);
     }
   }
+
+  async findCitiesWithSilimarNames(cityName: string): Promise<CitiesEntity[]> {
+    const cities = await this.citiesRepository
+      .createQueryBuilder('cities')
+      .where('cities.city ILIKE :name', {
+        name: `%${cityName}%`,
+      })
+      .take(50)
+      .getMany();
+
+    return cities;
+  }
 }
