@@ -13,6 +13,7 @@ import { UserEntity } from './entities/user.entity';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { Validate } from 'class-validator';
 import { AuthGuard } from '@nestjs/passport';
+import { UserId } from '../auth/decorators/userId.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -37,15 +38,18 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Put(':id')
-  async updateOne(@Param('id') id: string, @Body() payload: UpdateUserDto) {
-    return await this.usersService.updateUser(id, payload);
+  @Put()
+  async updateOne(
+    @UserId() currentUserId: string,
+    @Body() payload: UpdateUserDto,
+  ) {
+    return await this.usersService.updateUser(currentUserId, payload);
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Delete(':id')
+  @Delete()
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteOne(@Param('id') id: string) {
-    return await this.usersService.deleteUser(id);
+  async deleteOne(@UserId() currentUserId: string) {
+    return await this.usersService.deleteUser(currentUserId);
   }
 }

@@ -15,6 +15,7 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { UploadFilesService } from './upload-files.service';
 import { PetDonationImageEntity } from './entities/pet-donation-images.entity';
+import { UserId } from '../auth/decorators/userId.decorator';
 
 @Controller('upload-files')
 @UseGuards(AuthGuard('jwt'))
@@ -23,19 +24,19 @@ export class UploadFilesController {
 
   //AVATAR FILE
   //===================================
-  @Post('avatar/:id')
+  @Post('avatar')
   @UseInterceptors(FileInterceptor('file'))
   async uploadAvatarFile(
     @UploadedFile() file: Express.Multer.File,
-    @Param('id') userId: string,
+    @UserId() currentUserId: string,
   ) {
-    return await this.uploadFileService.uploadAvatarFile(userId, file);
+    return await this.uploadFileService.uploadAvatarFile(currentUserId, file);
   }
 
-  @Delete('avatar/:id')
+  @Delete('avatar')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteAvatarFile(@Param('id') id: string) {
-    return await this.uploadFileService.deleteAvatarFile(id);
+  async deleteAvatarFile(@UserId() currentUserId: string) {
+    return await this.uploadFileService.deleteAvatarFile(currentUserId);
   }
 
   //PET DONATION IMAGES FILES

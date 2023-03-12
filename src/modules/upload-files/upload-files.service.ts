@@ -38,6 +38,9 @@ export class UploadFilesService {
 
   async uploadAvatarFile(userId: string, file: Express.Multer.File) {
     const user = await this.findUserByIdOrFail(userId);
+
+    console.log('user id', userId);
+
     const urlImage = await this.uploadFile(userId, file);
     user.avatar = urlImage;
     await this.userRepository.save(user);

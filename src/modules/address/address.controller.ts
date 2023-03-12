@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Validate } from 'class-validator';
+import { UserId } from '../auth/decorators/userId.decorator';
 import { AddressService } from './address.service';
 import { CreateAddressDto } from './dtos/create-address.dto';
 import { UpdateAddressDto } from './dtos/update-address.dto';
@@ -21,9 +22,11 @@ import { ConsultAddressByCepResponse } from './interfaces/addressInterfaces';
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}
 
-  @Get(':id')
-  async findUserAdress(@Param('id') id: string): Promise<AddressEntity[]> {
-    return await this.addressService.findUserAddress(id);
+  @Get()
+  async findUserAdress(
+    @UserId() currentUserId: string,
+  ): Promise<AddressEntity[]> {
+    return await this.addressService.findUserAddress(currentUserId);
   }
 
   @Get('consult-address/:cep')
@@ -41,23 +44,23 @@ export class AddressController {
   @Post(':id')
   @Validate(CreateAddressDto)
   async registerAddress(
-    @Param('id') id: string,
+    @UserId() currentUserId: string,
     @Body() payload: CreateAddressDto,
   ): Promise<AddressEntity> {
-    return await this.addressService.registerAddress(id, payload);
+    return await this.addressService.registerAddress(currentUserId, payload);
   }
 
-  @Put(':id')
+  @Put(':adressId')
   @Validate(UpdateAddressDto)
   async updateAdress(
-    @Param('id') id: string,
+    @Param('adressId') adressId: string,
     @Body() payload: UpdateAddressDto,
   ): Promise<AddressEntity> {
-    return await this.addressService.updateAdress(id, payload);
+    return await this.addressService.updateAdress(adressId, payload);
   }
 
-  @Delete(':id')
-  async deleteAddress(@Param('id') id: string) {
-    return await this.addressService.deleteAddress(id);
+  @Delete(':adressId')
+  async deleteAddress(@Param('adressId') adressId: string) {
+    return await this.addressService.deleteAddress(adressId);
   }
 }

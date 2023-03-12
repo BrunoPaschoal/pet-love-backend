@@ -9,6 +9,6 @@ export const UserId = createParamDecorator(
       email: undefined,
       id: undefined,
     };
-    return user.id;
+    return user.id.toString();
   },
 );
