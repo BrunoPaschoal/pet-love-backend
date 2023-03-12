@@ -79,7 +79,7 @@ export class FavoritePetsService {
     if (!favoritePet) {
       throw new HttpException(
         'O anúncio de doação não está em seus favoritos!',
-        HttpStatus.OK,
+        HttpStatus.NOT_FOUND,
       );
     }
 

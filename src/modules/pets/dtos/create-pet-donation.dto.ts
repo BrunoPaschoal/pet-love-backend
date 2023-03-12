@@ -48,6 +48,10 @@ export class CreatePetDonationDto {
 
   @IsNotEmpty()
   @IsString()
+  addressId: string;
+
+  @IsNotEmpty()
+  @IsString()
   petStory: string;
 
   @IsArray()

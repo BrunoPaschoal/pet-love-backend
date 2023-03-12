@@ -1,5 +1,4 @@
 export type FindPetDonationsDto = {
-  userId: string;
   page: string;
   perPage: string;
   sizeFilter?: string;

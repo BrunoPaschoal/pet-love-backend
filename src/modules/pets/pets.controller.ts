@@ -18,6 +18,7 @@ import { PetsEntity } from './entities/pets.entity';
 import { Validate } from 'class-validator';
 import { UpdatePetDonationDto } from './dtos/update-pet-donation.dto';
 import { FindPetDonationsDto } from './dtos/find-pet-by-distance.dto';
+import { UserId } from '../auth/decorators/userId.decorator';
 
 @Controller('pets')
 @UseGuards(AuthGuard('jwt'))
@@ -25,27 +26,29 @@ export class PetsController {
   constructor(private readonly petsService: PetsService) {}
 
   @Get('donations')
-  async findPetsByDistance(@Query() payload: FindPetDonationsDto) {
-    return this.petsService.findPetDonations(payload);
+  async findPetDonations(
+    @Query() payload: FindPetDonationsDto,
+    @UserId() currentUserId: string,
+  ) {
+    return this.petsService.findPetDonations(payload, currentUserId);
   }
 
-  @Get('donations/:id')
+  @Get('donations')
   async getUserDonations(
-    @Param('id') userId: string,
+    @UserId() currentUserId: string,
     @Query('page') page: number,
     @Query('perPage') perPage: number,
   ) {
-    return this.petsService.findUserDonations(userId, page, perPage);
+    return this.petsService.findUserDonations(currentUserId, page, perPage);
   }
 
   @Post('donations')
   @Validate(CreatePetDonationDto)
   async createDonation(
+    @UserId() currentUserId: string,
     @Body() payload: CreatePetDonationDto,
-    @Query('addressId') addressId: string,
-    @Query('userId') userId: string,
   ): Promise<PetsEntity> {
-    return this.petsService.createDonation(addressId, userId, payload);
+    return this.petsService.createDonation(currentUserId, payload);
   }
 
   @Put('donations/:id')

@@ -1,6 +1,5 @@
 import {
   Controller,
-  Query,
   UseGuards,
   Post,
   Get,
@@ -19,12 +18,12 @@ import { FavoritePetsService } from './favorite-pets.service';
 export class FavoritePetsController {
   constructor(private readonly favoritePetsService: FavoritePetsService) {}
 
-  @Post()
+  @Post(':petDonationId')
   async favoritePet(
-    @Query('petDonationId') petDonationId: string,
-    @Query('userId') userId: string,
+    @Param('petDonationId') petDonationId: string,
+    @UserId() currentUserId: string,
   ): Promise<FavoritePetEntity> {
-    return this.favoritePetsService.favoritePet(userId, petDonationId);
+    return this.favoritePetsService.favoritePet(currentUserId, petDonationId);
   }
 
   @Get()

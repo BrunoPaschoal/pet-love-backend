@@ -85,17 +85,19 @@ export class PetsService {
     };
   }
 
-  async findPetDonations({
-    userId,
-    page,
-    perPage,
-    sizeFilter,
-    stateFilter,
-    cityIbgeCodeFilter,
-    sexFilter,
-    ageFilter,
-    ageTypeFilter,
-  }: FindPetDonationsDto) {
+  async findPetDonations(
+    {
+      page,
+      perPage,
+      sizeFilter,
+      stateFilter,
+      cityIbgeCodeFilter,
+      sexFilter,
+      ageFilter,
+      ageTypeFilter,
+    }: FindPetDonationsDto,
+    userId: string,
+  ) {
     const currentPage = +page;
     const perPageAmount = +perPage;
     const ageFilterParam = +ageFilter;
@@ -174,13 +176,14 @@ export class PetsService {
   }
 
   async createDonation(
-    addressId: string,
     userId: string,
     payload: CreatePetDonationDto,
   ): Promise<PetsEntity> {
     const personalityList = payload.personality;
     const user = await this.usersService.findUserByIdOrFail(userId);
-    const address = await this.addressService.findAddressByIdOrFail(addressId);
+    const address = await this.addressService.findAddressByIdOrFail(
+      payload.addressId,
+    );
     const breed = await this.animalBreedService.findAnimalBreedsByIdOrFail(
       payload.breedId,
     );
