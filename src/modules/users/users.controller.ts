@@ -27,19 +27,19 @@ export class UsersController {
 
   @Post()
   @Validate(CreateUserDto)
-  async create(@Body() user: CreateUserDto): Promise<UserEntity> {
+  async createUser(@Body() user: CreateUserDto): Promise<UserEntity> {
     return await this.usersService.createUser(user);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findUser(@Param('id') id: string) {
     return await this.usersService.findUserByIdOrFail(id);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Put()
-  async updateOne(
+  async updateUser(
     @UserId() currentUserId: string,
     @Body() payload: UpdateUserDto,
   ) {
@@ -49,7 +49,7 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   @Delete()
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteOne(@UserId() currentUserId: string) {
+  async deleteUser(@UserId() currentUserId: string) {
     return await this.usersService.deleteUser(currentUserId);
   }
 }
