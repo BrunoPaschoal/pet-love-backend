@@ -4,6 +4,8 @@ import { AnimalBreedsService } from './animal-breeds.service';
 import { PopulateAnimalBreedsBaseDto } from './dto/populate-animal-breeds-base.dto';
 import { FindAnimalBreedsDto } from './dto//find-animal-breeds.dto';
 import { AnimalBreedsEntity } from './entities/animal-breeds.entity';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Controller('animal-breeds')
 @UseGuards(AuthGuard('jwt'))
@@ -25,6 +27,8 @@ export class AnimalBreedsController {
   }
 
   @Post()
+  @UseGuards(RolesGuard)
+  @Roles('MASTER', 'ADMIN')
   async populateAnimalBreedsBase(
     @Body() animalBreedsList: PopulateAnimalBreedsBaseDto,
   ) {

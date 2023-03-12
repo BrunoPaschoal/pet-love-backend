@@ -3,6 +3,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { AddPersonalityDto } from './dtos/add-personality.dto';
 import { PersonalityEntity } from './entities/personality.entity';
 import { PersonalityService } from './personality.service';
+import { RolesGuard } from './../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Controller('personality')
 @UseGuards(AuthGuard('jwt'))
@@ -15,6 +17,8 @@ export class PersonalityController {
   }
 
   @Post()
+  @UseGuards(RolesGuard)
+  @Roles('MASTER', 'ADMIN')
   async addPersonality(@Body() personality: AddPersonalityDto) {
     return this.personalityService.addPersonality(personality);
   }
