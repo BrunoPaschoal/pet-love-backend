@@ -10,6 +10,7 @@ import {
   Param,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { UserId } from '../auth/decorators/userId.decorator';
 import { FavoritePetEntity } from './entities/favorite-pet.entity';
 import { FavoritePetsService } from './favorite-pets.service';
 
@@ -26,11 +27,11 @@ export class FavoritePetsController {
     return this.favoritePetsService.favoritePet(userId, petDonationId);
   }
 
-  @Get(':id')
+  @Get()
   async findUserFavorites(
-    @Param('id') userId: string,
+    @UserId() currentUserId: string,
   ): Promise<FavoritePetEntity[]> {
-    return this.favoritePetsService.findUserFavorites(userId);
+    return this.favoritePetsService.findUserFavorites(currentUserId);
   }
 
   @Delete(':id')
