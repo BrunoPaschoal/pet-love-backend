@@ -28,7 +28,10 @@ export class UsersService {
     });
 
     if (isUserAlreadExist) {
-      throw new HttpException('User Already exists', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Poxa, esse email já existe em nossa base de dados! 😯',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const passwordEncrypted = await hash(user.password, 10);
