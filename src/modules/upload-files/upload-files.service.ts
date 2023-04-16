@@ -39,8 +39,6 @@ export class UploadFilesService {
   async uploadAvatarFile(userId: string, file: Express.Multer.File) {
     const user = await this.findUserByIdOrFail(userId);
 
-    console.log('user id', userId);
-
     const urlImage = await this.uploadFile(userId, file);
     user.avatar = urlImage;
     await this.userRepository.save(user);
@@ -106,8 +104,6 @@ export class UploadFilesService {
       where: { id: petDonationId },
     });
 
-    console.log(petDonation);
-
     if (!petDonation) {
       throw new HttpException(
         'Doação de pet não encontrada.',
@@ -157,7 +153,6 @@ export class UploadFilesService {
     try {
       await this.s3.deleteObject(params).promise();
     } catch (error) {
-      console.log(`Error deleting file: ${error}`);
       throw error;
     }
   }

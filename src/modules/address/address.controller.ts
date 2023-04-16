@@ -41,7 +41,7 @@ export class AddressController {
     return await this.addressService.findAddressByIdOrFail(id);
   }
 
-  @Post(':id')
+  @Post()
   @Validate(CreateAddressDto)
   async registerAddress(
     @UserId() currentUserId: string,
