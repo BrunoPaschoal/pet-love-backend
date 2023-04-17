@@ -22,6 +22,7 @@ export class UsersService {
   ) {}
 
   async createUser(user: CreateUserDto): Promise<UserEntity> {
+    user.email = user.email.toLowerCase();
     const isUserAlreadExist = await this.userRepository.findOne({
       where: { email: user.email },
       select: ['id', 'name', 'email', 'phone', 'createdAt'],
@@ -80,7 +81,7 @@ export class UsersService {
 
   async findUserByEmailOrFail(email: string): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
-      where: { email },
+      where: { email: email.toLowerCase() },
     });
 
     if (!user) {

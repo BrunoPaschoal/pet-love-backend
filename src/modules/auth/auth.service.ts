@@ -26,8 +26,8 @@ export class AuthService {
   }
 
   async login(user: UserEntity) {
+    user.email = user.email.toLowerCase();
     const payload = { sub: user.id, email: user.email };
-
     return {
       ...user,
       token: this.jwtService.sign(payload),
