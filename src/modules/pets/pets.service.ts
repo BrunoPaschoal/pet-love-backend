@@ -95,6 +95,7 @@ export class PetsService {
       sexFilter,
       ageFilter,
       ageTypeFilter,
+      orderBy,
     }: FindPetDonationsDto,
     userId: string,
   ) {
@@ -115,22 +116,23 @@ export class PetsService {
     const queryBuilder = this.petsRepository
       .createQueryBuilder('pets')
       .leftJoinAndSelect('pets.address', 'address')
-      .leftJoinAndSelect('pets.personality', 'personalities')
-      .leftJoinAndSelect('personalities.personality', 'personality')
-      .leftJoinAndSelect('pets.breed', 'breed')
       .leftJoinAndSelect('pets.images', 'images')
       .select([
-        'pets',
-        'personalities',
+        'pets.id',
+        'pets.sex',
+        'pets.name',
+        'pets.createdAt',
+        'pets.age',
+        'pets.ageType',
         'address.city',
         'address.state',
-        'personality.id',
-        'personality.name',
-        'breed.id',
-        'breed.breedName',
         'images',
       ])
-      .where('pets.user <> :userId', { userId });
+      .where('pets.user <> :userId', { userId })
+      .orderBy('pets.createdAt', 'DESC');
+
+    if (orderBy) queryBuilder.orderBy('pets.createdAt', orderBy);
+
     if (sizeFilter)
       queryBuilder.andWhere('pets.size = :sizeFilter', { sizeFilter });
     if (sexFilter)
@@ -155,7 +157,6 @@ export class PetsService {
 
     const pets = results.map((pet) => ({
       ...pet,
-      personality: pet.personality.map((p) => p.personality),
       isFavorite: userFavorites.some((fav) => fav.pet.id === pet.id),
     }));
 
@@ -167,6 +168,89 @@ export class PetsService {
       totalPages,
     };
   }
+
+  // async findPetDonationsOld(
+  //   {
+  //     page,
+  //     perPage,
+  //     sizeFilter,
+  //     stateFilter,
+  //     cityIbgeCodeFilter,
+  //     sexFilter,
+  //     ageFilter,
+  //     ageTypeFilter,
+  //   }: FindPetDonationsDto,
+  //   userId: string,
+  // ) {
+  //   const currentPage = +page;
+  //   const perPageAmount = +perPage;
+  //   const ageFilterParam = +ageFilter;
+
+  //   await this.usersService.findUserByIdOrFail(userId);
+
+  //   const userFavorites = await this.favoritePetRepository.find({
+  //     where: { user: { id: userId } },
+  //     relations: ['pet'],
+  //     select: {
+  //       pet: { id: true },
+  //     },
+  //   });
+
+  //   const queryBuilder = this.petsRepository
+  //     .createQueryBuilder('pets')
+  //     .leftJoinAndSelect('pets.address', 'address')
+  //     .leftJoinAndSelect('pets.personality', 'personalities')
+  //     .leftJoinAndSelect('personalities.personality', 'personality')
+  //     .leftJoinAndSelect('pets.breed', 'breed')
+  //     .leftJoinAndSelect('pets.images', 'images')
+  //     .select([
+  //       'pets',
+  //       'personalities',
+  //       'address.city',
+  //       'address.state',
+  //       'personality.id',
+  //       'personality.name',
+  //       'breed.id',
+  //       'breed.breedName',
+  //       'images',
+  //     ])
+  //     .where('pets.user <> :userId', { userId });
+  //   if (sizeFilter)
+  //     queryBuilder.andWhere('pets.size = :sizeFilter', { sizeFilter });
+  //   if (sexFilter)
+  //     queryBuilder.andWhere('pets.sex = :sexFilter', { sexFilter });
+  //   if (stateFilter)
+  //     queryBuilder.andWhere('address.state = :stateFilter', { stateFilter });
+  //   if (cityIbgeCodeFilter)
+  //     queryBuilder.andWhere('address.cityIbgeCode = :cityIbgeCodeFilter', {
+  //       cityIbgeCodeFilter,
+  //     });
+  //   if (ageFilterParam)
+  //     queryBuilder.andWhere('pets.age= :ageFilterParam', { ageFilterParam });
+  //   if (ageTypeFilter)
+  //     queryBuilder.andWhere('pets.ageType = :ageTypeFilter', { ageTypeFilter });
+
+  //   const [results, total] = await queryBuilder
+  //     .take(perPageAmount)
+  //     .skip((currentPage - 1) * perPageAmount)
+  //     .getManyAndCount();
+
+  //   const totalPages = Math.ceil(total / perPageAmount);
+
+  //   const pets = results.map((pet) => ({
+  //     ...pet,
+  //     personality: pet.personality.map((p) => p.personality),
+  //     isFavorite: userFavorites.some((fav) => fav.pet.id === pet.id),
+  //   }));
+
+  //   return {
+  //     pets,
+  //     currentPage,
+  //     perPageAmount,
+  //     total,
+  //     totalPages,
+  //   };
+  // }
 
   async doesPetBelongToUser(userId: string, donationId: string) {
     const pet = await this.petsRepository.findOne({
@@ -270,4 +354,7 @@ export class PetsService {
     await this.uploadFilesService.deletePetImagesAndRelationship(petId);
     await this.petsRepository.remove(petDonation);
   }
+}
+function orderBy(arg0: string, arg1: string) {
+  throw new Error('Function not implemented.');
 }

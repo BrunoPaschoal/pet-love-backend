@@ -7,4 +7,5 @@ export type FindPetDonationsDto = {
   sexFilter?: string;
   ageFilter?: string;
   ageTypeFilter: string;
+  orderBy?: 'DESC' | 'ASC';
 };
