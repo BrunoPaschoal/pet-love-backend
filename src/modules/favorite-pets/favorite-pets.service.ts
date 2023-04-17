@@ -71,19 +71,19 @@ export class FavoritePetsService {
     return userFavoritePets;
   }
 
-  async unfavoritePet(favoriteId: string) {
-    const favoritePet = await this.favoritePetsRepository.findOne({
-      where: { id: favoriteId },
+  async unfavoritePet(petDonationId: string, userId: string) {
+    const petFavorite = await this.favoritePetsRepository.findOne({
+      where: { pet: { id: petDonationId }, user: { id: userId } },
     });
 
-    if (!favoritePet) {
+    if (!petFavorite) {
       throw new HttpException(
         'O anúncio de doação não está em seus favoritos!',
         HttpStatus.NOT_FOUND,
       );
     }
 
-    await this.favoritePetsRepository.remove(favoritePet);
+    await this.favoritePetsRepository.remove(petFavorite);
   }
 
   async alreadyInTheTavorites(userId: string, donationId: string) {

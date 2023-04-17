@@ -13,7 +13,7 @@ import { UserId } from '../auth/decorators/userId.decorator';
 import { FavoritePetEntity } from './entities/favorite-pet.entity';
 import { FavoritePetsService } from './favorite-pets.service';
 
-@Controller('favorite-pets')
+@Controller('favorite-pet')
 @UseGuards(AuthGuard('jwt'))
 export class FavoritePetsController {
   constructor(private readonly favoritePetsService: FavoritePetsService) {}
@@ -35,7 +35,10 @@ export class FavoritePetsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async unfavoritePet(@Param('id') favoriteId: string) {
-    return this.favoritePetsService.unfavoritePet(favoriteId);
+  async unfavoritePet(
+    @UserId() currentUserId: string,
+    @Param('id') petDonationId: string,
+  ) {
+    return this.favoritePetsService.unfavoritePet(petDonationId, currentUserId);
   }
 }
