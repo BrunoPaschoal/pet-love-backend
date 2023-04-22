@@ -65,6 +65,16 @@ export class FavoritePetsService {
     const userFavoritePets = await this.favoritePetsRepository
       .createQueryBuilder('favoritePet')
       .leftJoinAndSelect('favoritePet.pet', 'pet')
+      .leftJoinAndSelect('pet.images', 'images')
+      .select([
+        'favoritePet.id',
+        'pet.id',
+        'pet.sex',
+        'pet.name',
+        'pet.age',
+        'pet.ageType',
+        'images',
+      ])
       .where('favoritePet.userId = :userId', { userId })
       .getMany();
 
