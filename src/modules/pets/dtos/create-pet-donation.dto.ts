@@ -14,6 +14,7 @@ import {
   PetType,
 } from '../interfaces/petsInterfaces';
 import { PersonalityDto } from './personality.dto';
+import { PetImagesDto } from './pet-images.dto';
 
 export class CreatePetDonationDto {
   @IsNotEmpty()
@@ -58,4 +59,9 @@ export class CreatePetDonationDto {
   @ValidateNested({ each: true })
   @Type(() => PersonalityDto)
   personality: PersonalityDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => PetImagesDto)
+  petImages: PetImagesDto[];
 }

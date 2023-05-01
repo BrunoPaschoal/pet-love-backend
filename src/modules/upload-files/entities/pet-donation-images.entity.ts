@@ -12,6 +12,9 @@ export class PetDonationImageEntity {
   @Column()
   imageKey: string;
 
+  @Column({ default: false })
+  isMain: boolean;
+
   @ManyToOne(() => PetsEntity, (pet) => pet.images, { onDelete: 'CASCADE' })
   pet: PetsEntity;
 }

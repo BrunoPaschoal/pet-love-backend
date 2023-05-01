@@ -13,7 +13,7 @@ import { UserId } from '../auth/decorators/userId.decorator';
 import { FavoritePetEntity } from './entities/favorite-pet.entity';
 import { FavoritePetsService } from './favorite-pets.service';
 
-@Controller('favorite-pet')
+@Controller('favorite')
 @UseGuards(AuthGuard('jwt'))
 export class FavoritePetsController {
   constructor(private readonly favoritePetsService: FavoritePetsService) {}

@@ -13,6 +13,7 @@ import { AnimalBreedsService } from '../animal-breeds/animal-breeds.service';
 import { FindPetDonationsDto } from './dtos/find-pet-by-distance.dto';
 import { UploadFilesService } from '../upload-files/upload-files.service';
 import { FavoritePetEntity } from 'src/modules/favorite-pets/entities/favorite-pet.entity';
+import { base64Decoder } from 'src/helpers/base64Decoder';
 
 @Injectable()
 export class PetsService {
@@ -169,89 +170,6 @@ export class PetsService {
     };
   }
 
-  // async findPetDonationsOld(
-  //   {
-  //     page,
-  //     perPage,
-  //     sizeFilter,
-  //     stateFilter,
-  //     cityIbgeCodeFilter,
-  //     sexFilter,
-  //     ageFilter,
-  //     ageTypeFilter,
-  //   }: FindPetDonationsDto,
-  //   userId: string,
-  // ) {
-  //   const currentPage = +page;
-  //   const perPageAmount = +perPage;
-  //   const ageFilterParam = +ageFilter;
-
-  //   await this.usersService.findUserByIdOrFail(userId);
-
-  //   const userFavorites = await this.favoritePetRepository.find({
-  //     where: { user: { id: userId } },
-  //     relations: ['pet'],
-  //     select: {
-  //       pet: { id: true },
-  //     },
-  //   });
-
-  //   const queryBuilder = this.petsRepository
-  //     .createQueryBuilder('pets')
-  //     .leftJoinAndSelect('pets.address', 'address')
-  //     .leftJoinAndSelect('pets.personality', 'personalities')
-  //     .leftJoinAndSelect('personalities.personality', 'personality')
-  //     .leftJoinAndSelect('pets.breed', 'breed')
-  //     .leftJoinAndSelect('pets.images', 'images')
-  //     .select([
-  //       'pets',
-  //       'personalities',
-  //       'address.city',
-  //       'address.state',
-  //       'personality.id',
-  //       'personality.name',
-  //       'breed.id',
-  //       'breed.breedName',
-  //       'images',
-  //     ])
-  //     .where('pets.user <> :userId', { userId });
-  //   if (sizeFilter)
-  //     queryBuilder.andWhere('pets.size = :sizeFilter', { sizeFilter });
-  //   if (sexFilter)
-  //     queryBuilder.andWhere('pets.sex = :sexFilter', { sexFilter });
-  //   if (stateFilter)
-  //     queryBuilder.andWhere('address.state = :stateFilter', { stateFilter });
-  //   if (cityIbgeCodeFilter)
-  //     queryBuilder.andWhere('address.cityIbgeCode = :cityIbgeCodeFilter', {
-  //       cityIbgeCodeFilter,
-  //     });
-  //   if (ageFilterParam)
-  //     queryBuilder.andWhere('pets.age= :ageFilterParam', { ageFilterParam });
-  //   if (ageTypeFilter)
-  //     queryBuilder.andWhere('pets.ageType = :ageTypeFilter', { ageTypeFilter });
-
-  //   const [results, total] = await queryBuilder
-  //     .take(perPageAmount)
-  //     .skip((currentPage - 1) * perPageAmount)
-  //     .getManyAndCount();
-
-  //   const totalPages = Math.ceil(total / perPageAmount);
-
-  //   const pets = results.map((pet) => ({
-  //     ...pet,
-  //     personality: pet.personality.map((p) => p.personality),
-  //     isFavorite: userFavorites.some((fav) => fav.pet.id === pet.id),
-  //   }));
-
-  //   return {
-  //     pets,
-  //     currentPage,
-  //     perPageAmount,
-  //     total,
-  //     totalPages,
-  //   };
-  // }
-
   async doesPetBelongToUser(userId: string, donationId: string) {
     const pet = await this.petsRepository.findOne({
       where: { id: donationId, user: { id: userId } },
@@ -264,6 +182,8 @@ export class PetsService {
     payload: CreatePetDonationDto,
   ): Promise<PetsEntity> {
     const personalityList = payload.personality;
+    const petImages = payload.petImages;
+
     const user = await this.usersService.findUserByIdOrFail(userId);
     const address = await this.addressService.findAddressByIdOrFail(
       payload.addressId,
@@ -274,6 +194,7 @@ export class PetsService {
 
     delete payload.personality;
     delete payload.breedId;
+    delete payload.petImages;
     const newPetDonation = this.petsRepository.create({
       ...payload,
       user: user,
@@ -287,6 +208,17 @@ export class PetsService {
       personalityList,
       newPetDonation,
     );
+
+    for (let i = 0; i < petImages.length; i++) {
+      const file = petImages[i].file;
+      const isMain = petImages[i].isMain;
+
+      await this.uploadFilesService.uploadPetImage(
+        newPetDonation.id,
+        isMain,
+        base64Decoder(file),
+      );
+    }
 
     return newPetDonation;
   }

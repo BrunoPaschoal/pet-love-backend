@@ -134,6 +134,37 @@ export class UploadFilesService {
     return UploadedFilesData;
   }
 
+  async uploadPetImage(
+    petDonationId: string,
+    isMain: boolean,
+    file: Express.Multer.File,
+  ): Promise<UploadMultipleFilesResponse> {
+    const petDonation = await this.petsRepository.findOne({
+      where: { id: petDonationId },
+    });
+
+    const petGaleryKey = `pet-image-${uuidv4()}`;
+
+    await this.uploadFile(petGaleryKey, file);
+
+    const petImages = this.petDonationImageRepository.create({
+      url: `${this.awsBaseUrl}${petGaleryKey}`,
+      imageKey: petGaleryKey,
+      pet: petDonation,
+      isMain: isMain,
+    });
+
+    await this.petDonationImageRepository.save(petImages);
+
+    const fileUploaded = {
+      id: petImages.id,
+      url: petImages.url,
+      imageKey: petImages.imageKey,
+    };
+
+    return fileUploaded;
+  }
+
   async deletePetImagesAndRelationship(petId: string) {
     const petDonationImages = await this.findPetDonationImages(petId);
 
